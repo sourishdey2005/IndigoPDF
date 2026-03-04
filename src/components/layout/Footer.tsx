@@ -1,13 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Github, Linkedin, Globe, ExternalLink } from "lucide-react";
+import { Github, Linkedin, Globe, ExternalLink, Smartphone } from "lucide-react";
 
 export function Footer() {
   return (
     <footer className="bg-slate-50 border-t py-12 dark:bg-slate-900">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          <div className="col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+          <div className="col-span-1 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
               <div className="relative w-8 h-8 bg-white rounded-lg flex items-center justify-center overflow-hidden border">
                 <Image 
@@ -85,6 +85,31 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="font-semibold text-sm uppercase tracking-wider text-slate-400 flex items-center gap-2">
+              <Smartphone size={16} />
+              Mobile App
+            </h4>
+            <Link 
+              href="https://www.upload-apk.com/jeHEIWT6ev8dxos" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="block transition-transform hover:scale-105 active:scale-95"
+            >
+              <div className="relative w-[160px] h-[48px] overflow-hidden rounded-lg shadow-md border bg-white flex items-center justify-center">
+                <Image 
+                  src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772635160/IndigoPDF_kw0cqb.png" 
+                  alt="Download IndigoPDF APK" 
+                  fill
+                  className="object-contain p-1"
+                />
+              </div>
+            </Link>
+            <p className="text-[10px] text-muted-foreground leading-tight max-w-[160px]">
+              Take IndigoPDF on the go. Download the official APK for your Android device.
+            </p>
           </div>
         </div>
         
