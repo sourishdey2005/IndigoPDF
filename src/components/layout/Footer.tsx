@@ -1,6 +1,6 @@
-
 import Link from "next/link";
-import { FileText, Github, Linkedin } from "lucide-react";
+import Image from "next/image";
+import { Github, Linkedin } from "lucide-react";
 
 export function Footer() {
   return (
@@ -9,8 +9,13 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <div className="col-span-1 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
-                <FileText size={18} />
+              <div className="relative w-8 h-8 bg-white rounded-lg flex items-center justify-center overflow-hidden border">
+                <Image 
+                  src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png" 
+                  alt="IndigoPDF Logo" 
+                  fill
+                  className="object-contain p-0.5"
+                />
               </div>
               <span className="text-lg font-bold tracking-tight">
                 Indigo<span className="text-primary">PDF</span>

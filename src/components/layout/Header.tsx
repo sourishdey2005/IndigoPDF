@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { FileText, Menu, ChevronDown, Combine, Scissors, Zap, Lock, FileSearch, Languages, Camera } from "lucide-react";
+import Image from "next/image";
+import { Menu, ChevronDown, Combine, Scissors, Zap, Lock, FileSearch, Languages, Camera, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,8 +18,13 @@ export function Header() {
     <header className="glass-header">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white transition-transform group-hover:rotate-6">
-            <FileText size={24} />
+          <div className="relative w-10 h-10 bg-white rounded-xl flex items-center justify-center overflow-hidden border transition-transform group-hover:rotate-6">
+            <Image 
+              src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png" 
+              alt="IndigoPDF Logo" 
+              fill
+              className="object-contain p-1"
+            />
           </div>
           <span className="text-xl font-bold tracking-tight font-headline">
             Indigo<span className="text-primary">PDF</span>
