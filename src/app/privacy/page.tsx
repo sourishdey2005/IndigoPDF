@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion } from "framer-motion";
@@ -42,7 +41,7 @@ export default function PrivacyPage() {
           </section>
           <section>
             <h2 className="text-2xl font-bold text-slate-900 mb-3">2. How We Process Files</h2>
-            <p>All PDF manipulations (merging, splitting, compressing, etc.) happen on the client-side. We use libraries like <code>pdf-lib</code> and <code>pdfjs-dist</code> that run directly in your web browser.</p>
+            <p>All document processing and digital manipulations—including but not limited to merging, splitting, and compression—are executed exclusively within the user's local computing environment. Our service architecture utilizes advanced client-side processing to ensure that no raw document data is transmitted to or stored on external server infrastructure, thereby providing a secure, local-only processing sandbox.</p>
           </section>
           <section>
             <h2 className="text-2xl font-bold text-slate-900 mb-3">3. Cookies</h2>
