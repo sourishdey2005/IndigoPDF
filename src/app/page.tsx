@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, use } from "react";
@@ -130,8 +131,7 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
   return (
     <div className="flex flex-col w-full overflow-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center pt-24 pb-20 lg:pt-32 lg:pb-40 overflow-hidden bg-slate-50 dark:bg-slate-900/50">
-        {/* Animated Background Blobs */}
+      <section className="relative min-h-[85vh] lg:min-h-[90vh] flex items-center pt-20 pb-16 lg:pt-32 lg:pb-40 overflow-hidden bg-slate-50 dark:bg-slate-900/50">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
           <motion.div 
             animate={{ 
@@ -140,7 +140,7 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
               y: [0, -30, 0]
             }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute top-[-10%] -left-[10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[120px]" 
+            className="absolute top-[-10%] -left-[10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[80px] sm:blur-[120px]" 
           />
           <motion.div 
             animate={{ 
@@ -149,70 +149,70 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
               y: [0, 60, 0]
             }}
             transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute bottom-[-10%] -right-[10%] w-[40%] h-[40%] bg-secondary/5 rounded-full blur-[100px]" 
+            className="absolute bottom-[-10%] -right-[10%] w-[40%] h-[40%] bg-secondary/5 rounded-full blur-[70px] sm:blur-[100px]" 
           />
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <motion.div 
-              initial={{ opacity: 0, x: -30 }} 
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-center lg:text-left"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold mb-8 border border-primary/20">
-                <Zap size={16} className="fill-primary" />
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold mb-6 sm:mb-8 border border-primary/20">
+                <Zap size={14} className="fill-primary" />
                 <span>100% Private Browser-Based PDF Tools</span>
               </div>
               
-              <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 font-headline leading-[1.1] text-slate-900 dark:text-white">
-                The Ultimate <br />
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6 sm:mb-8 font-headline leading-[1.1] text-slate-900 dark:text-white">
+                The Ultimate <br className="hidden sm:block" />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">PDF Power Suite</span>
               </h1>
               
-              <p className="text-xl text-slate-600 dark:text-slate-400 max-w-xl mb-12 leading-relaxed font-medium">
+              <p className="text-base sm:text-lg lg:text-xl text-slate-600 dark:text-slate-400 max-w-xl mx-auto lg:mx-0 mb-8 sm:mb-12 leading-relaxed font-medium">
                 Professional-grade PDF management without the privacy risk. <strong>Merge, Split, Compress, OCR, and Convert</strong> your documents 100% locally in your browser.
               </p>
               
-              <div className="flex flex-col sm:flex-row items-center gap-5">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-5">
                 <a href="#tools" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full sm:w-auto rounded-full h-16 px-10 text-lg font-bold shadow-2xl shadow-primary/30 transition-all hover:scale-105 active:scale-95">
+                  <Button size="lg" className="w-full sm:w-auto rounded-full h-14 sm:h-16 px-8 sm:px-10 text-base sm:text-lg font-bold shadow-2xl shadow-primary/30 transition-all hover:scale-105 active:scale-95">
                     Explore 30+ Tools
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </a>
                 <a href="#how-it-works" className="w-full sm:w-auto">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto rounded-full h-16 px-10 text-lg font-bold border-2 hover:bg-slate-100 transition-all active:scale-95">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto rounded-full h-14 sm:h-16 px-8 sm:px-10 text-base sm:text-lg font-bold border-2 hover:bg-slate-100 transition-all active:scale-95">
                     How it Works
                   </Button>
                 </a>
               </div>
 
               {/* Trust Badges */}
-              <div className="mt-12 pt-12 border-t border-slate-200 dark:border-slate-800 grid grid-cols-3 gap-8">
+              <div className="mt-10 sm:mt-12 pt-8 sm:pt-12 border-t border-slate-200 dark:border-slate-800 grid grid-cols-3 gap-4 sm:gap-8">
                 <div className="flex flex-col">
-                  <span className="text-2xl font-bold text-slate-900 dark:text-white">100%</span>
-                  <span className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Private</span>
+                  <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">100%</span>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-widest font-bold">Private</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-2xl font-bold text-slate-900 dark:text-white">0</span>
-                  <span className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Costs</span>
+                  <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">0</span>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-widest font-bold">Costs</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-2xl font-bold text-slate-900 dark:text-white">Instant</span>
-                  <span className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Processing</span>
+                  <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Instant</span>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-widest font-bold leading-tight">Speed</span>
                 </div>
               </div>
             </motion.div>
 
             <motion.div 
-              initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 1, delay: 0.2, type: "spring", stiffness: 100 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.2, type: "spring" }}
               className="relative hidden lg:block"
             >
               <div className="relative aspect-square w-full max-w-lg mx-auto">
-                {/* Decorative Elements */}
                 <motion.div 
                   animate={{ y: [0, -20, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -228,7 +228,6 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
                   <Zap size={40} className="text-amber-500 fill-amber-100" />
                 </motion.div>
                 
-                {/* Main Illustration Base */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-[40px] shadow-[0_40px_100px_rgba(79,70,229,0.2)] flex flex-col items-center justify-center p-12 overflow-hidden">
                   <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
                   <motion.div 
@@ -242,15 +241,6 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
                     <h3 className="text-white font-bold text-2xl mb-2">Secure Local Engine</h3>
                     <p className="text-white/70 text-sm font-medium">Your browser is the server.</p>
                   </div>
-                  
-                  {/* Floating Action Icons */}
-                  <div className="mt-8 flex gap-3">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
-                        <CheckCircle2 size={18} className="text-white/50" />
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
             </motion.div>
@@ -259,57 +249,50 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
       </section>
 
       {/* Core Benefits Section */}
-      <section className="py-24 bg-white dark:bg-slate-950 border-y border-slate-100 dark:border-slate-900">
+      <section className="py-16 sm:py-24 bg-white dark:bg-slate-950 border-y border-slate-100 dark:border-slate-900">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <motion.div whileHover={{ y: -5 }} className="space-y-4">
-              <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center shadow-inner">
-                <ShieldCheck size={28} />
-              </div>
-              <h3 className="text-xl font-bold">Privacy First</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Documents are processed entirely within your browser's local sandbox. No data ever leaves your device.
-              </p>
-            </motion.div>
-            <motion.div whileHover={{ y: -5 }} className="space-y-4">
-              <div className="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center shadow-inner">
-                <Cpu size={28} />
-              </div>
-              <h3 className="text-xl font-bold">Native Speed</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Leveraging the full power of your machine's hardware for high-speed PDF manipulation without server latency.
-              </p>
-            </motion.div>
-            <motion.div whileHover={{ y: -5 }} className="space-y-4">
-              <div className="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center shadow-inner">
-                <MousePointer2 size={28} />
-              </div>
-              <h3 className="text-xl font-bold">Zero Friction</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                No signups, no watermarks, and no annoying download limits. Just upload, process, and download.
-              </p>
-            </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-12">
+            {[
+              { icon: ShieldCheck, title: "Privacy First", color: "emerald", desc: "Documents are processed entirely within your browser's local sandbox. No data ever leaves your device." },
+              { icon: Cpu, title: "Native Speed", color: "amber", desc: "Leveraging the full power of your machine's hardware for high-speed PDF manipulation without server latency." },
+              { icon: MousePointer2, title: "Zero Friction", color: "indigo", desc: "No signups, no watermarks, and no annoying download limits. Just upload, process, and download." }
+            ].map((benefit, i) => (
+              <motion.div key={i} whileHover={{ y: -5 }} className="space-y-4 text-center sm:text-left">
+                <div className={cn(
+                  "w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner mx-auto sm:mx-0",
+                  benefit.color === "emerald" ? "bg-emerald-100 text-emerald-600" :
+                  benefit.color === "amber" ? "bg-amber-100 text-amber-600" :
+                  "bg-indigo-100 text-indigo-600"
+                )}>
+                  <benefit.icon size={28} />
+                </div>
+                <h3 className="text-xl font-bold">{benefit.title}</h3>
+                <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
+                  {benefit.desc}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Tools Section */}
-      <section id="tools" className="py-24 container mx-auto px-4 scroll-mt-20">
-        <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-8">
-          <div className="text-center md:text-left">
-            <h2 className="text-4xl font-bold mb-3 font-headline">Professional Toolset</h2>
-            <p className="text-lg text-muted-foreground max-w-xl">
+      <section id="tools" className="py-16 sm:py-24 container mx-auto px-4 scroll-mt-20">
+        <div className="flex flex-col items-center justify-between mb-12 sm:mb-16 gap-8 text-center lg:flex-row lg:text-left">
+          <div className="space-y-2">
+            <h2 className="text-3xl sm:text-4xl font-bold font-headline">Professional Toolset</h2>
+            <p className="text-base sm:text-lg text-muted-foreground max-w-xl">
               Everything you need to manage your PDF documents securely, organized by category for easy access.
             </p>
           </div>
           
-          <Tabs defaultValue="All" onValueChange={setActiveTab} className="w-full md:w-auto">
-            <TabsList className="bg-white dark:bg-slate-800 p-1.5 h-14 rounded-2xl border shadow-xl flex overflow-x-auto no-scrollbar">
+          <Tabs defaultValue="All" onValueChange={setActiveTab} className="w-full lg:w-auto">
+            <TabsList className="bg-white dark:bg-slate-800 p-1 h-auto sm:h-14 rounded-2xl border shadow-xl flex flex-wrap sm:flex-nowrap justify-center overflow-hidden">
               {["All", "Organize", "Optimize", "Convert", "Edit", "Security", "Specialized"].map((tab) => (
                 <TabsTrigger 
                   key={tab} 
                   value={tab} 
-                  className="rounded-xl px-6 h-full font-bold data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg transition-all"
+                  className="rounded-xl px-3 sm:px-6 py-2 sm:h-full text-xs sm:text-sm font-bold data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg transition-all"
                 >
                   {tab}
                 </TabsTrigger>
@@ -320,7 +303,7 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
 
         <motion.div 
           layout
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
         >
           {filteredTools.map((tool) => (
             <ToolCard key={tool.id} {...tool} />
@@ -328,62 +311,26 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
         </motion.div>
       </section>
 
-      {/* How it Works / Stats Section */}
-      <section id="how-it-works" className="py-24 bg-slate-900 text-white overflow-hidden relative">
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[150px]" />
-        </div>
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl font-bold mb-4 font-headline">Browser-Based Innovation</h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">
-              We've re-engineered traditional PDF tools to work where they belong: directly on your computer.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-            {[
-              { title: "Select", desc: "Drag and drop your file directly into our workspace." },
-              { title: "Process", desc: "Our engine executes the task instantly using your CPU." },
-              { title: "Preview", desc: "Confirm everything looks perfect with instant visual feedback." },
-              { title: "Download", desc: "Save your file. It never touched a server." }
-            ].map((step, i) => (
-              <div key={i} className="relative text-center">
-                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center mx-auto mb-6 text-xl font-bold shadow-[0_0_20px_rgba(79,70,229,0.5)]">
-                  {i + 1}
-                </div>
-                <h4 className="text-xl font-bold mb-3">{step.title}</h4>
-                <p className="text-slate-400 text-sm leading-relaxed">{step.desc}</p>
-                {i < 3 && (
-                  <div className="hidden md:block absolute top-6 left-[calc(50%+30px)] w-[calc(100%-60px)] h-px bg-gradient-to-r from-primary to-transparent" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* FAQ Section */}
-      <section id="faq" className="py-24 bg-slate-50 dark:bg-slate-950 scroll-mt-20">
+      <section id="faq" className="py-16 sm:py-24 bg-slate-50 dark:bg-slate-950 scroll-mt-20">
         <div className="container mx-auto px-4 max-w-3xl">
-          <div className="text-center mb-16">
-            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mx-auto mb-6">
+          <div className="text-center mb-12 sm:mb-16">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mx-auto mb-6">
               <HelpCircle size={32} />
             </div>
-            <h2 className="text-4xl font-bold mb-4 font-headline tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight">
               Frequently Asked Questions
             </h2>
-            <p className="text-muted-foreground">Everything you need to know about the IndigoPDF experience.</p>
+            <p className="text-muted-foreground mt-2">Everything you need to know about IndigoPDF.</p>
           </div>
           
           <Accordion type="single" collapsible className="w-full space-y-4">
             {faqs.map((faq, idx) => (
-              <AccordionItem key={idx} value={`item-${idx}`} className="bg-white dark:bg-slate-900 px-8 rounded-3xl border shadow-sm overflow-hidden">
-                <AccordionTrigger className="text-lg font-bold hover:no-underline py-6">
+              <AccordionItem key={idx} value={`item-${idx}`} className="bg-white dark:bg-slate-900 px-6 sm:px-8 rounded-3xl border shadow-sm overflow-hidden border-none">
+                <AccordionTrigger className="text-base sm:text-lg font-bold hover:no-underline py-5 sm:py-6">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-slate-600 dark:text-slate-400 text-base pb-8">
+                <AccordionContent className="text-slate-600 dark:text-slate-400 text-sm sm:text-base pb-6 sm:pb-8">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -393,4 +340,8 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
       </section>
     </div>
   );
+}
+
+function cn(...inputs: any[]) {
+  return inputs.filter(Boolean).join(" ");
 }
