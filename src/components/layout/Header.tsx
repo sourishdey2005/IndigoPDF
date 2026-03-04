@@ -63,7 +63,6 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" className="hidden sm:flex">Login</Button>
           <Button size="sm" className="rounded-full shadow-lg shadow-primary/20">Get Started</Button>
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu size={20} />
