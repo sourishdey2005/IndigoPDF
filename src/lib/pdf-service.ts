@@ -1,4 +1,9 @@
-import { PDFDocument, StandardFonts, rgb, degrees } from 'pdf-lib';
+/**
+ * PDF Service
+ * Handles all client-side PDF operations using pdf-lib and pdfjs-dist.
+ * Uses dynamic imports to prevent chunk loading errors in Next.js development.
+ */
+
 import * as pdfjsLib from 'pdfjs-dist';
 
 // Configure pdfjs worker if in browser
@@ -7,6 +12,7 @@ if (typeof window !== "undefined") {
 }
 
 export async function mergePDFs(files: File[]): Promise<Uint8Array> {
+  const { PDFDocument } = await import('pdf-lib');
   const mergedPdf = await PDFDocument.create();
   
   for (const file of files) {
@@ -20,6 +26,7 @@ export async function mergePDFs(files: File[]): Promise<Uint8Array> {
 }
 
 export async function splitPDF(file: File, rangeStr: string): Promise<Uint8Array[]> {
+  const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const sourcePdf = await PDFDocument.load(arrayBuffer);
   const totalPages = sourcePdf.getPageCount();
@@ -46,6 +53,7 @@ export async function splitPDF(file: File, rangeStr: string): Promise<Uint8Array
 }
 
 export async function compressPDF(file: File, level: number): Promise<Uint8Array> {
+  const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
   const useObjectStreams = level > 30;
@@ -57,6 +65,7 @@ export async function compressPDF(file: File, level: number): Promise<Uint8Array
 }
 
 export async function rotatePDF(file: File, rotation: number): Promise<Uint8Array> {
+  const { PDFDocument, degrees } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
   const pages = pdfDoc.getPages();
@@ -68,19 +77,22 @@ export async function rotatePDF(file: File, rotation: number): Promise<Uint8Arra
 }
 
 export async function protectPDF(file: File, userPassword?: string): Promise<Uint8Array> {
+  const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
-  // Security rules would normally be applied here; pdf-lib basic save is returned for the prototype
+  // Basic save for prototype; production encryption requires crypto-js or native encryption support
   return await pdfDoc.save();
 }
 
 export async function unlockPDF(file: File, password?: string): Promise<Uint8Array> {
+  const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer, { password });
   return await pdfDoc.save();
 }
 
 export async function convertImagesToPDF(files: File[]): Promise<Uint8Array> {
+  const { PDFDocument } = await import('pdf-lib');
   const pdfDoc = await PDFDocument.create();
   
   for (const file of files) {
@@ -107,6 +119,7 @@ export async function convertImagesToPDF(files: File[]): Promise<Uint8Array> {
 }
 
 export async function addWatermark(file: File, text: string): Promise<Uint8Array> {
+  const { PDFDocument, StandardFonts, rgb, degrees } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
   const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
@@ -129,6 +142,7 @@ export async function addWatermark(file: File, text: string): Promise<Uint8Array
 }
 
 export async function addPageNumbers(file: File): Promise<Uint8Array> {
+  const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -149,6 +163,7 @@ export async function addPageNumbers(file: File): Promise<Uint8Array> {
 }
 
 export async function organizePDF(file: File, pageOrder: number[]): Promise<Uint8Array> {
+  const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const sourcePdf = await PDFDocument.load(arrayBuffer);
   const newPdf = await PDFDocument.create();
@@ -202,6 +217,7 @@ export async function pdfToJpg(file: File): Promise<string[]> {
 }
 
 export async function signPDF(file: File, signatureDataUri: string): Promise<Uint8Array> {
+  const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
   const signatureImage = await pdfDoc.embedPng(signatureDataUri);
@@ -219,23 +235,23 @@ export async function signPDF(file: File, signatureDataUri: string): Promise<Uin
 }
 
 export async function repairPDF(file: File): Promise<Uint8Array> {
+  const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
-  // Re-saving often repairs minor internal structure issues
   return await pdfDoc.save();
 }
 
 export async function pdfToPDFA(file: File): Promise<Uint8Array> {
+  const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
-  // Simplified version: mark as PDF/A compliant metadata
   return await pdfDoc.save();
 }
 
 export async function redactPDF(file: File, searchTerms: string[]): Promise<Uint8Array> {
+  const { PDFDocument, rgb } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
-  // Redaction usually requires complex coordinates; for prototype, we add black boxes
   const pages = pdfDoc.getPages();
   pages.forEach(page => {
     page.drawRectangle({

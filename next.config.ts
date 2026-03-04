@@ -30,6 +30,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Ensure heavy PDF libraries are transpiled correctly for App Router/Turbopack
+  transpilePackages: ['pdf-lib', 'pdfjs-dist', '@pdf-lib/standard-fonts'],
 };
 
 export default nextConfig;
