@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -26,9 +25,9 @@ export function Header() {
 
   return (
     <header className="glass-header">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative w-12 h-12 bg-white rounded-xl flex items-center justify-center overflow-hidden border transition-transform group-hover:rotate-6">
+      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-4 group">
+          <div className="relative w-14 h-14 bg-white rounded-xl flex items-center justify-center overflow-hidden border transition-transform group-hover:rotate-6">
             <Image 
               src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png" 
               alt="IndigoPDF Logo" 
@@ -36,7 +35,7 @@ export function Header() {
               className="object-contain p-1"
             />
           </div>
-          <span className="text-xl font-bold tracking-tight font-headline">
+          <span className="text-2xl font-bold tracking-tight font-headline">
             Indigo<span className="text-primary">PDF</span>
           </span>
         </Link>
@@ -85,11 +84,11 @@ export function Header() {
           )}
           
           {mounted ? (
-            <Button size="sm" className="rounded-full shadow-lg shadow-primary/20">
+            <Button size="lg" className="rounded-full shadow-lg shadow-primary/20">
               Get Started
             </Button>
           ) : (
-            <div className="h-9 w-24 bg-primary/10 animate-pulse rounded-full" />
+            <div className="h-10 w-28 bg-primary/10 animate-pulse rounded-full" />
           )}
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu size={20} />
