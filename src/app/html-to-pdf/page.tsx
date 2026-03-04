@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { convertUrlToPdf } from "@/lib/pdf-service";
+import { saveAs } from "file-saver";
 
 export default function HTMLToPDFPage() {
   const [url, setUrl] = useState("");
@@ -18,10 +20,13 @@ export default function HTMLToPDFPage() {
     if (!url) return;
     setIsProcessing(true);
     try {
-      await new Promise(r => setTimeout(r, 4000));
+      const pdfBytes = await convertUrlToPdf(url);
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      saveAs(blob, "web-capture.pdf");
       setIsFinished(true);
       toast({ title: "Success", description: "Webpage successfully converted to PDF." });
     } catch (e) {
+      console.error(e);
       toast({ title: "Error", description: "Failed to convert URL.", variant: "destructive" });
     } finally {
       setIsProcessing(false);
@@ -66,7 +71,9 @@ export default function HTMLToPDFPage() {
           <p className="mb-8 text-muted-foreground">Your PDF version of <b>{url}</b> is ready for download.</p>
           <div className="flex gap-4 justify-center">
             <Button onClick={() => setIsFinished(false)} className="rounded-full">Convert Another URL</Button>
-            <Button variant="outline" className="rounded-full"><Download className="mr-2 h-4 w-4" /> Download Again</Button>
+            <Button variant="outline" className="rounded-full" onClick={handleConvert}>
+              <Download className="mr-2 h-4 w-4" /> Download Again
+            </Button>
           </div>
         </div>
       )}

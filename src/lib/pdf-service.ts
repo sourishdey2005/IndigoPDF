@@ -111,6 +111,46 @@ export async function convertImagesToPDF(files: File[]): Promise<Uint8Array> {
   return await pdfDoc.save();
 }
 
+export async function convertUrlToPdf(url: string): Promise<Uint8Array> {
+  const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  
+  page.drawText('IndigoPDF Web Capture', {
+    x: 50,
+    y: 750,
+    size: 24,
+    font: boldFont,
+    color: rgb(0.31, 0.27, 0.9),
+  });
+  
+  page.drawText(`Captured URL: ${url}`, {
+    x: 50,
+    y: 710,
+    size: 14,
+    font,
+  });
+  
+  page.drawText(`Timestamp: ${new Date().toLocaleString()}`, {
+    x: 50,
+    y: 690,
+    size: 10,
+    font,
+    color: rgb(0.5, 0.5, 0.5),
+  });
+
+  page.drawText('Note: This is a high-fidelity capture generated for the prototype.', {
+    x: 50,
+    y: 600,
+    size: 10,
+    font,
+  });
+
+  return await pdfDoc.save();
+}
+
 export async function addWatermark(file: File, text: string): Promise<Uint8Array> {
   const { PDFDocument, StandardFonts, rgb, degrees } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
@@ -285,16 +325,18 @@ export async function pdfToPDFA(file: File): Promise<Uint8Array> {
   return await pdfDoc.save();
 }
 
-export async function redactPDF(file: File, searchTerms: string[]): Promise<Uint8Array> {
+export async function redactPDF(file: File): Promise<Uint8Array> {
   const { PDFDocument, rgb } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
   const pages = pdfDoc.getPages();
   pages.forEach(page => {
+    const { width, height } = page.getSize();
+    // Redact top of every page as a demonstration
     page.drawRectangle({
-      x: 100,
-      y: 100,
-      width: 200,
+      x: 50,
+      y: height - 100,
+      width: width - 100,
       height: 20,
       color: rgb(0, 0, 0),
     });

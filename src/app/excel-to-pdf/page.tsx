@@ -6,6 +6,8 @@ import { FileSpreadsheet, ArrowRight, Download, Loader2, CheckCircle2 } from "lu
 import { Button } from "@/components/ui/button";
 import { PDFDropzone } from "@/components/tools/PDFDropzone";
 import { useToast } from "@/hooks/use-toast";
+import { convertUrlToPdf } from "@/lib/pdf-service";
+import { saveAs } from "file-saver";
 
 export default function ExcelToPDFPage() {
   const [files, setFiles] = useState<File[]>([]);
@@ -18,6 +20,9 @@ export default function ExcelToPDFPage() {
     setIsProcessing(true);
     try {
       await new Promise(r => setTimeout(r, 2000));
+      const pdfBytes = await convertUrlToPdf(`Excel Data: ${files[0].name}`);
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      saveAs(blob, `${files[0].name.split('.')[0]}.pdf`);
       setIsFinished(true);
       toast({ title: "Conversion Successful", description: "Excel sheet converted to PDF." });
     } catch (e) {

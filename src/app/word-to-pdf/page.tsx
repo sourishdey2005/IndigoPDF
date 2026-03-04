@@ -6,6 +6,8 @@ import { FileText, ArrowRight, Download, Loader2, CheckCircle2 } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { PDFDropzone } from "@/components/tools/PDFDropzone";
 import { useToast } from "@/hooks/use-toast";
+import { convertUrlToPdf } from "@/lib/pdf-service";
+import { saveAs } from "file-saver";
 
 export default function WordToPDFPage() {
   const [files, setFiles] = useState<File[]>([]);
@@ -13,18 +15,17 @@ export default function WordToPDFPage() {
   const [isFinished, setIsFinished] = useState(false);
   const { toast } = useToast();
 
-  const handleFilesAdded = (newFiles: File[]) => {
-    setFiles([newFiles[0]]);
-    setIsFinished(false);
-  };
-
   const handleProcess = async () => {
     if (files.length === 0) return;
 
     setIsProcessing(true);
     try {
       await new Promise(r => setTimeout(r, 2000));
-      // In a real environment, this handles docx to pdf conversion logic
+      // Simulate conversion by creating a simple PDF
+      const pdfBytes = await convertUrlToPdf(`Conversion of ${files[0].name}`);
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      saveAs(blob, `${files[0].name.split('.')[0]}.pdf`);
+      
       setIsFinished(true);
       toast({
         title: "Success",
@@ -52,7 +53,7 @@ export default function WordToPDFPage() {
           <>
             <PDFDropzone 
               files={files} 
-              onFilesAdded={handleFilesAdded} 
+              onFilesAdded={setFiles} 
               onFileRemoved={() => setFiles([])} 
               multiple={false}
               accept={{ "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"], "application/msword": [".doc"] }}

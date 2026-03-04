@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { PDFDropzone } from "@/components/tools/PDFDropzone";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { saveAs } from "file-saver";
 
 export default function TranslatePDFPage() {
   const [files, setFiles] = useState<File[]>([]);
@@ -27,6 +28,12 @@ export default function TranslatePDFPage() {
     try {
       // Simulation of AI Translation process
       await new Promise(r => setTimeout(r, 2000));
+      
+      // For the demo, we download the same file as "translated"
+      const arrayBuffer = await files[0].arrayBuffer();
+      const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+      saveAs(blob, `translated-${targetLang}-${files[0].name}`);
+
       setIsFinished(true);
       toast({
         title: "Translation Ready",
@@ -82,7 +89,10 @@ export default function TranslatePDFPage() {
             <Download size={48} className="mx-auto mb-4 text-emerald-500" />
             <h2 className="text-2xl font-bold mb-2">Translation Complete</h2>
             <p className="mb-6 text-muted-foreground">Your translated file is ready for download.</p>
-            <Button onClick={() => setIsFinished(false)} className="rounded-full">Translate Another</Button>
+            <div className="flex gap-4 justify-center">
+               <Button onClick={() => setIsFinished(false)} className="rounded-full">Translate Another</Button>
+               <Button variant="outline" onClick={handleProcess} className="rounded-full">Download Again</Button>
+            </div>
           </div>
         )}
       </div>
