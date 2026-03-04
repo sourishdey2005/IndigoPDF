@@ -1,5 +1,7 @@
+
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, ChevronDown, Combine, Scissors, Zap, Lock, FileSearch, Languages, Camera, FileText } from "lucide-react";
@@ -14,6 +16,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function Header() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <header className="glass-header">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -63,7 +71,13 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <Button size="sm" className="rounded-full shadow-lg shadow-primary/20">Get Started</Button>
+          {mounted ? (
+            <Button size="sm" className="rounded-full shadow-lg shadow-primary/20">
+              Get Started
+            </Button>
+          ) : (
+            <div className="h-9 w-24 bg-primary/10 animate-pulse rounded-full" />
+          )}
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu size={20} />
           </Button>
