@@ -1,23 +1,58 @@
 
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Combine, ArrowRight, Download, Loader2 } from "lucide-react";
+import { useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Combine, ArrowRight, Download, Loader2, FileText, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PDFDropzone } from "@/components/tools/PDFDropzone";
 import { mergePDFs } from "@/lib/pdf-service";
 import { saveAs } from "file-saver";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent } from "@/components/ui/card";
+import * as pdfjsLib from 'pdfjs-dist';
+
+if (typeof window !== "undefined") {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+}
+
+interface FileWithThumbnail {
+  file: File;
+  thumbnail: string | null;
+}
 
 export default function MergePDFPage() {
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<FileWithThumbnail[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const { toast } = useToast();
 
-  const handleFilesAdded = (newFiles: File[]) => {
-    setFiles([...files, ...newFiles]);
+  const generateThumbnail = async (file: File): Promise<string | null> => {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const page = await pdf.getPage(1);
+      const viewport = page.getViewport({ scale: 0.3 });
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      if (!context) return null;
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      await page.render({ canvasContext: context, viewport }).promise;
+      return canvas.toDataURL('image/jpeg', 0.7);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const handleFilesAdded = async (newFiles: File[]) => {
+    const filesWithThumbnails = await Promise.all(
+      newFiles.map(async (file) => ({
+        file,
+        thumbnail: await generateThumbnail(file)
+      }))
+    );
+    setFiles((prev) => [...prev, ...filesWithThumbnails]);
     setIsFinished(false);
   };
 
@@ -37,7 +72,8 @@ export default function MergePDFPage() {
 
     setIsProcessing(true);
     try {
-      const mergedPdfBytes = await mergePDFs(files);
+      const actualFiles = files.map(f => f.file);
+      const mergedPdfBytes = await mergePDFs(actualFiles);
       const blob = new Blob([mergedPdfBytes], { type: "application/pdf" });
       saveAs(blob, "merged-indigopdf.pdf");
       setIsFinished(true);
@@ -58,7 +94,7 @@ export default function MergePDFPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
+    <div className="container mx-auto px-4 py-12 max-w-5xl">
       <div className="text-center mb-12">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -77,11 +113,45 @@ export default function MergePDFPage() {
         {!isFinished ? (
           <>
             <PDFDropzone 
-              files={files} 
+              files={files.map(f => f.file)} 
               onFilesAdded={handleFilesAdded} 
               onFileRemoved={removeFile} 
             />
             
+            {files.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                <AnimatePresence>
+                  {files.map((item, idx) => (
+                    <motion.div
+                      key={`${item.file.name}-${idx}`}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      className="group relative"
+                    >
+                      <Card className="overflow-hidden border-2 bg-white hover:border-primary/50 transition-colors">
+                        <CardContent className="p-0 aspect-[3/4] flex items-center justify-center relative">
+                          {item.thumbnail ? (
+                            <img src={item.thumbnail} alt={item.file.name} className="w-full h-full object-contain p-2" />
+                          ) : (
+                            <FileText size={32} className="text-slate-300" />
+                          )}
+                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button size="icon" variant="destructive" className="h-6 w-6 rounded-full" onClick={() => removeFile(idx)}>
+                              <X size={12} />
+                            </Button>
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-1">
+                            <p className="text-[10px] text-white truncate text-center">{item.file.name}</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
+
             <div className="flex justify-center pt-6">
               <Button
                 size="lg"
@@ -96,7 +166,7 @@ export default function MergePDFPage() {
                   </>
                 ) : (
                   <>
-                    Merge Files
+                    Merge {files.length} Files
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </>
                 )}
@@ -114,39 +184,15 @@ export default function MergePDFPage() {
             </div>
             <h2 className="text-3xl font-bold mb-4">Task Complete!</h2>
             <p className="text-muted-foreground mb-10 max-w-md mx-auto">
-              Your files have been merged successfully. If your download hasn't started automatically, click the button below.
+              Your files have been merged successfully.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="rounded-full h-12" onClick={() => setIsFinished(false)}>
+              <Button size="lg" className="rounded-full h-12" onClick={() => { setFiles([]); setIsFinished(false); }}>
                 Start Over
-              </Button>
-              <Button size="lg" variant="outline" className="rounded-full h-12" onClick={handleProcess}>
-                Download Again
               </Button>
             </div>
           </motion.div>
         )}
-      </div>
-
-      <div className="mt-20 pt-10 border-t">
-        <h3 className="text-2xl font-bold mb-6">How to merge PDF files</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <div className="text-3xl font-bold text-primary/20 mb-2">01</div>
-            <h4 className="font-bold mb-2">Upload PDFs</h4>
-            <p className="text-sm text-muted-foreground">Select two or more PDF files from your computer or drag and drop them above.</p>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-primary/20 mb-2">02</div>
-            <h4 className="font-bold mb-2">Reorder (Optional)</h4>
-            <p className="text-sm text-muted-foreground">The files will be merged in the order they appear in the list.</p>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-primary/20 mb-2">03</div>
-            <h4 className="font-bold mb-2">Download</h4>
-            <p className="text-sm text-muted-foreground">Click "Merge Files" and download your combined document instantly.</p>
-          </div>
-        </div>
       </div>
     </div>
   );
