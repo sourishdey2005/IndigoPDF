@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -32,7 +31,8 @@ import {
   ArrowRight,
   HelpCircle,
   FileQuestion,
-  Info
+  Info,
+  XCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ToolCard } from "@/components/tools/ToolCard";
@@ -49,16 +49,19 @@ const tools = [
   { id: 'merge', title: "Merge PDF", description: "Combine PDFs in the order you want.", icon: Combine, href: "/merge-pdf", category: "Organize" },
   { id: 'split', title: "Split PDF", description: "Separate one page or a whole set into independent files.", icon: Scissors, href: "/split-pdf", category: "Organize" },
   { id: 'organize', title: "Organize PDF", description: "Sort, delete, and reorder pages however you like.", icon: Grid3X3, href: "/organize-pdf", category: "Organize" },
+  { id: 'delete-pages', title: "Delete Pages", description: "Remove unwanted pages from your PDF file.", icon: XCircle, href: "/delete-pages", category: "Organize" },
   
   // Optimize
   { id: 'compress', title: "Compress PDF", description: "Reduce file size while optimizing for quality.", icon: Zap, href: "/compress-pdf", category: "Optimize" },
   { id: 'repair', title: "Repair PDF", description: "Repair a damaged PDF and recover data.", icon: Wrench, href: "/repair-pdf", category: "Optimize" },
+  { id: 'flatten', title: "Flatten PDF", description: "Merge form fields and layers into page content.", icon: Layers, href: "/flatten-pdf", category: "Optimize" },
   
   // Convert From PDF
   { id: 'pdf-to-word', title: "PDF to Word", description: "Convert PDFs into editable DOC and DOCX documents.", icon: FileText, href: "/pdf-to-word", category: "Convert" },
   { id: 'pdf-to-excel', title: "PDF to Excel", description: "Pull data from PDFs into Excel spreadsheets.", icon: FileSpreadsheet, href: "/pdf-to-excel", category: "Convert" },
   { id: 'pdf-to-ppt', title: "PDF to PowerPoint", description: "Turn PDF files into PPT and PPTX slideshows.", icon: Presentation, href: "/pdf-to-ppt", category: "Convert" },
   { id: 'pdf-to-jpg', title: "PDF to JPG", description: "Convert each PDF page into a high-quality JPG.", icon: ImageIcon, href: "/pdf-to-jpg", category: "Convert" },
+  { id: 'pdf-to-text', title: "PDF to Text", description: "Extract raw text data from digital PDF files.", icon: FileText, href: "/pdf-to-text", category: "Convert" },
   
   // Convert To PDF
   { id: 'word-to-pdf', title: "Word to PDF", description: "Convert DOC and DOCX files to PDF.", icon: FileText, href: "/word-to-pdf", category: "Convert" },
@@ -74,6 +77,7 @@ const tools = [
   { id: 'watermark', title: "Watermark", description: "Stamp image or text over your PDF.", icon: ShieldCheck, href: "/watermark-pdf", category: "Edit" },
   { id: 'page-nums', title: "Page Numbers", description: "Add page numbers with custom positions.", icon: Type, href: "/page-numbers", category: "Edit" },
   { id: 'crop', title: "Crop PDF", description: "Crop margins or specific areas of your PDF.", icon: Crop, href: "/crop-pdf", category: "Edit" },
+  { id: 'metadata', title: "Metadata Editor", description: "Edit Title, Author, and Keywords of your PDF.", icon: Info, href: "/add-metadata", category: "Edit" },
   
   // Security
   { id: 'protect', title: "Protect PDF", description: "Encrypt PDF files with a password.", icon: Lock, href: "/protect-pdf", category: "Security" },
@@ -86,6 +90,7 @@ const tools = [
   { id: 'pdf-to-pdfa', title: "PDF to PDF/A", description: "Transform PDF for long-term archiving.", icon: Layers, href: "/pdf-to-pdfa", category: "Specialized" },
   { id: 'scan-to-pdf', title: "Scan to PDF", description: "Capture documents using your camera.", icon: Camera, href: "/scan-to-pdf", category: "Specialized" },
   { id: 'compare', title: "Compare PDF", description: "Spot changes between two file versions.", icon: Search, href: "/compare-pdf", category: "Specialized" },
+  { id: 'extract-images', title: "Extract Images", description: "Pull all images from a PDF into JPG files.", icon: LayoutGrid, href: "/extract-images", category: "Specialized" },
 ];
 
 const faqs = [
@@ -196,7 +201,7 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
-              { step: "01", title: "Select Tool", desc: "Choose from over 25+ PDF tools designed for every document need.", icon: Grid3X3 },
+              { step: "01", title: "Select Tool", desc: "Choose from over 30+ PDF tools designed for every document need.", icon: Grid3X3 },
               { step: "02", title: "Upload & Process", desc: "Drag and drop your files. Processing happens instantly in your browser.", icon: Zap },
               { step: "03", title: "Download Result", desc: "Get your optimized document immediately. Fast, secure, and free.", icon: ArrowRight }
             ].map((item, idx) => (

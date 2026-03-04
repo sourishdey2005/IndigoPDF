@@ -174,6 +174,44 @@ export async function organizePDF(file: File, pageOrder: number[]): Promise<Uint
   return await newPdf.save();
 }
 
+export async function deletePages(file: File, pagesToDelete: number[]): Promise<Uint8Array> {
+  const { PDFDocument } = await import('pdf-lib');
+  const arrayBuffer = await file.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(arrayBuffer);
+  
+  const totalPages = pdfDoc.getPageCount();
+  const indicesToKeep = Array.from({ length: totalPages }, (_, i) => i)
+    .filter(i => !pagesToDelete.includes(i + 1));
+  
+  const newPdf = await PDFDocument.create();
+  const copiedPages = await newPdf.copyPages(pdfDoc, indicesToKeep);
+  copiedPages.forEach(p => newPdf.addPage(p));
+  
+  return await newPdf.save();
+}
+
+export async function flattenPDF(file: File): Promise<Uint8Array> {
+  const { PDFDocument } = await import('pdf-lib');
+  const arrayBuffer = await file.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(arrayBuffer);
+  const form = pdfDoc.getForm();
+  form.flatten();
+  return await pdfDoc.save();
+}
+
+export async function updateMetadata(file: File, metadata: { title?: string, author?: string, subject?: string, keywords?: string }): Promise<Uint8Array> {
+  const { PDFDocument } = await import('pdf-lib');
+  const arrayBuffer = await file.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(arrayBuffer);
+  
+  if (metadata.title) pdfDoc.setTitle(metadata.title);
+  if (metadata.author) pdfDoc.setAuthor(metadata.author);
+  if (metadata.subject) pdfDoc.setSubject(metadata.subject);
+  if (metadata.keywords) pdfDoc.setKeywords(metadata.keywords.split(',').map(k => k.trim()));
+  
+  return await pdfDoc.save();
+}
+
 export async function extractTextFromPDF(file: File): Promise<string[]> {
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
