@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -28,11 +29,20 @@ import {
   EyeOff,
   Crop,
   Languages,
-  ArrowRight
+  ArrowRight,
+  HelpCircle,
+  FileQuestion,
+  Info
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ToolCard } from "@/components/tools/ToolCard";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const tools = [
   // Organize
@@ -78,6 +88,25 @@ const tools = [
   { id: 'compare', title: "Compare PDF", description: "Spot changes between two file versions.", icon: Search, href: "/compare-pdf", category: "Specialized" },
 ];
 
+const faqs = [
+  {
+    question: "Is IndigoPDF really free?",
+    answer: "Yes, absolutely! All our PDF tools are 100% free to use with no hidden subscriptions or limits. We provide high-quality PDF processing because we believe everyone should have access to professional tools."
+  },
+  {
+    question: "How secure is my data?",
+    answer: "Extremely secure. Unlike other online PDF converters, IndigoPDF processes your files directly in your browser using WebAssembly. Your files are never uploaded to our servers, meaning your sensitive data never leaves your device."
+  },
+  {
+    question: "Do I need to install anything?",
+    answer: "No installation required. IndigoPDF works directly in any modern web browser on Windows, Mac, Linux, iOS, and Android."
+  },
+  {
+    question: "Is there a file size limit?",
+    answer: "The only limit is your device's memory. Since processing happens locally, very large files (e.g., over 500MB) might slow down your browser depending on your hardware, but we don't impose any artificial limits."
+  }
+];
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState("All");
 
@@ -87,6 +116,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col w-full">
+      {/* Hero Section */}
       <section className="relative py-20 lg:py-32 overflow-hidden bg-slate-50">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full opacity-30 pointer-events-none">
           <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
@@ -116,14 +146,17 @@ export default function Home() {
                   Explore Tools
                 </Button>
               </a>
-              <Button size="lg" variant="outline" className="rounded-full h-14 px-8 text-lg bg-white">
-                How it Works
-              </Button>
+              <a href="#how-it-works">
+                <Button size="lg" variant="outline" className="rounded-full h-14 px-8 text-lg bg-white">
+                  How it Works
+                </Button>
+              </a>
             </div>
           </motion.div>
         </div>
       </section>
 
+      {/* Tools Section */}
       <section id="tools" className="py-20 container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
           <div className="text-center md:text-left">
@@ -153,6 +186,34 @@ export default function Home() {
         </div>
       </section>
 
+      {/* How it Works Section */}
+      <section id="how-it-works" className="py-24 bg-white border-y">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4">How it Works</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Get professional results in three simple steps, without your files ever leaving your device.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {[
+              { step: "01", title: "Select Tool", desc: "Choose from over 25+ PDF tools designed for every document need.", icon: Grid3X3 },
+              { step: "02", title: "Upload & Process", desc: "Drag and drop your files. Processing happens instantly in your browser.", icon: Zap },
+              { step: "03", title: "Download Result", desc: "Get your optimized document immediately. Fast, secure, and free.", icon: ArrowRight }
+            ].map((item, idx) => (
+              <div key={idx} className="relative group p-8 rounded-3xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-xl transition-all">
+                <div className="text-6xl font-black text-primary/5 absolute top-4 right-8">{item.step}</div>
+                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6">
+                  <item.icon size={28} />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">{item.title}</h3>
+                <p className="text-slate-600 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Section */}
       <section className="py-20 bg-slate-900 text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-16">Why Choose IndigoPDF?</h2>
@@ -179,6 +240,30 @@ export default function Home() {
               <p className="text-slate-400">From intelligent OCR to layout-preserving translation, we use next-gen AI to simplify your workflow.</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="py-24 bg-slate-50">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4 flex items-center justify-center gap-3">
+              <HelpCircle className="text-primary" />
+              Frequently Asked Questions
+            </h2>
+            <p className="text-muted-foreground">Everything you need to know about IndigoPDF security and features.</p>
+          </div>
+          
+          <Accordion type="single" collapsible className="w-full space-y-4">
+            {faqs.map((faq, idx) => (
+              <AccordionItem key={idx} value={`item-${idx}`} className="bg-white px-6 rounded-2xl border border-slate-200">
+                <AccordionTrigger className="text-lg font-bold hover:no-underline">{faq.question}</AccordionTrigger>
+                <AccordionContent className="text-slate-600 text-base pb-6 leading-relaxed">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </section>
     </div>
