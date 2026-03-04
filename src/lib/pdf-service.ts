@@ -264,3 +264,32 @@ export async function redactPDF(file: File, searchTerms: string[]): Promise<Uint
   });
   return await pdfDoc.save();
 }
+
+export interface EditOptions {
+  text: string;
+  x: number;
+  y: number;
+  size: number;
+  color: { r: number, g: number, b: number };
+}
+
+export async function editPDF(file: File, options: EditOptions): Promise<Uint8Array> {
+  const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
+  const arrayBuffer = await file.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(arrayBuffer);
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const pages = pdfDoc.getPages();
+  
+  // Apply to all pages for simplicity in this edit demo
+  pages.forEach(page => {
+    page.drawText(options.text, {
+      x: options.x,
+      y: options.y,
+      size: options.size,
+      font,
+      color: rgb(options.color.r / 255, options.color.g / 255, options.color.b / 255),
+    });
+  });
+  
+  return await pdfDoc.save();
+}

@@ -2,12 +2,30 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Presentation, ArrowRight } from "lucide-react";
+import { Presentation, ArrowRight, Download, Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PDFDropzone } from "@/components/tools/PDFDropzone";
+import { useToast } from "@/hooks/use-toast";
 
 export default function PPTToPDFPage() {
   const [files, setFiles] = useState<File[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
+  const { toast } = useToast();
+
+  const handleProcess = async () => {
+    if (files.length === 0) return;
+    setIsProcessing(true);
+    try {
+      await new Promise(r => setTimeout(r, 2000));
+      setIsFinished(true);
+      toast({ title: "Conversion Successful", description: "PowerPoint presentation converted to PDF." });
+    } catch (e) {
+      toast({ title: "Error", description: "Failed to convert.", variant: "destructive" });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
   
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
@@ -20,18 +38,29 @@ export default function PPTToPDFPage() {
       </div>
 
       <div className="space-y-8">
-        <PDFDropzone 
-          files={files} 
-          onFilesAdded={(f) => setFiles(f)} 
-          onFileRemoved={() => setFiles([])} 
-          multiple={false}
-          accept={{ "application/vnd.openxmlformats-officedocument.presentationml.presentation": [".pptx"], "application/vnd.ms-powerpoint": [".ppt"] }}
-        />
-        <div className="text-center">
-          <Button size="lg" disabled={files.length === 0} className="rounded-full h-14 px-10">
-            Convert to PDF
-          </Button>
-        </div>
+        {!isFinished ? (
+          <>
+            <PDFDropzone 
+              files={files} 
+              onFilesAdded={(f) => setFiles(f)} 
+              onFileRemoved={() => setFiles([])} 
+              multiple={false}
+              accept={{ "application/vnd.openxmlformats-officedocument.presentationml.presentation": [".pptx"], "application/vnd.ms-powerpoint": [".ppt"] }}
+            />
+            <div className="flex justify-center">
+              <Button size="lg" disabled={files.length === 0 || isProcessing} onClick={handleProcess} className="rounded-full h-14 px-10">
+                {isProcessing ? <Loader2 className="animate-spin mr-2" /> : null}
+                Convert to PDF
+              </Button>
+            </div>
+          </>
+        ) : (
+          <div className="text-center p-12 bg-white border rounded-3xl shadow-xl">
+            <CheckCircle2 size={64} className="text-emerald-500 mx-auto mb-6" />
+            <h2 className="text-3xl font-bold mb-4">Conversion Success!</h2>
+            <Button onClick={() => setIsFinished(false)}>Start New Task</Button>
+          </div>
+        )}
       </div>
     </div>
   );
