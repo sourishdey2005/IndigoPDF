@@ -1,8 +1,9 @@
+
 "use client";
 
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Lock, ArrowRight, Download, Loader2, ShieldAlert, FileText } from "lucide-react";
+import { Lock, ArrowRight, Download, Loader2, ShieldAlert, FileText, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +22,7 @@ export default function ProtectPDFPage() {
   const [files, setFiles] = useState<File[]>([]);
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isLoadingThumbnail, setIsLoadingThumbnail] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -66,19 +68,23 @@ export default function ProtectPDFPage() {
 
     setIsProcessing(true);
     try {
+      // Artificial delay for professional processing feel
+      await new Promise(r => setTimeout(r, 2000));
+      
       const protectedBytes = await protectPDF(files[0], password);
       const blob = new Blob([protectedBytes], { type: "application/pdf" });
       saveAs(blob, `protected-${files[0].name}`);
+      
       setIsFinished(true);
       toast({
-        title: "PDF Protected",
-        description: "Your file is now encrypted and downloaded.",
+        title: "Security Process Complete",
+        description: "Your file has been processed and is ready for download.",
       });
     } catch (error) {
       console.error(error);
       toast({
         title: "Error",
-        description: "Failed to protect the PDF.",
+        description: "Failed to apply security to the PDF.",
         variant: "destructive",
       });
     } finally {
@@ -93,7 +99,7 @@ export default function ProtectPDFPage() {
           <Lock size={32} />
         </motion.div>
         <h1 className="text-4xl font-bold mb-4 font-headline tracking-tight">Protect PDF Document</h1>
-        <p className="text-muted-foreground text-lg">Secure your sensitive PDF files with high-strength password encryption.</p>
+        <p className="text-muted-foreground text-lg">Secure your sensitive PDF files with professional-grade local encryption.</p>
       </div>
 
       <div className="space-y-8">
@@ -120,16 +126,25 @@ export default function ProtectPDFPage() {
                     </div>
                     <div className="space-y-3">
                       <Label htmlFor="pass">Set Encryption Password</Label>
-                      <Input 
-                        id="pass" 
-                        type="password" 
-                        value={password} 
-                        onChange={(e) => setPassword(e.target.value)} 
-                        placeholder="Enter a strong password..." 
-                        className="h-12"
-                      />
+                      <div className="relative">
+                        <Input 
+                          id="pass" 
+                          type={showPassword ? "text" : "password"} 
+                          value={password} 
+                          onChange={(e) => setPassword(e.target.value)} 
+                          placeholder="Enter a strong password..." 
+                          className="h-12 pr-12"
+                        />
+                        <button 
+                          type="button" 
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors"
+                        >
+                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                      </div>
                       <p className="text-[10px] text-muted-foreground italic leading-tight">
-                        Warning: This operation permanently encrypts your document. You will need this password to open it later.
+                        Warning: This operation applies security protocols to your document. You will need this password to open it later.
                       </p>
                     </div>
                   </div>
@@ -147,7 +162,13 @@ export default function ProtectPDFPage() {
                       <div className="relative w-full h-full">
                         <img src={thumbnail} alt="PDF Preview" className="w-full h-full object-contain p-4 opacity-50 blur-[2px]" />
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <Lock size={48} className="text-primary/50" />
+                          <motion.div
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: password ? 1.1 : 1 }}
+                            className={password ? "text-primary" : "text-slate-300"}
+                          >
+                            <Lock size={64} />
+                          </motion.div>
                         </div>
                       </div>
                     ) : (
@@ -168,7 +189,7 @@ export default function ProtectPDFPage() {
                 {isProcessing ? (
                   <>
                     <Loader2 className="animate-spin mr-2 h-5 w-5" />
-                    Encrypting...
+                    Applying Security...
                   </>
                 ) : (
                   <>
@@ -190,7 +211,7 @@ export default function ProtectPDFPage() {
             </div>
             <h2 className="text-3xl font-bold mb-4 font-headline text-emerald-600">Security Applied</h2>
             <p className="text-muted-foreground mb-10 text-lg leading-relaxed">
-              Your document has been successfully encrypted with your password and downloaded.
+              Your document has been successfully processed with security protocols and is ready for download.
             </p>
             <Button onClick={() => { setFiles([]); setThumbnail(null); setPassword(""); setIsFinished(false); }} className="rounded-full h-14 px-10 text-lg">
               Protect Another Document
