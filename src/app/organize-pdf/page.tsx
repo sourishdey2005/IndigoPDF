@@ -1,24 +1,26 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { motion, Reorder, AnimatePresence } from "framer-motion";
 import { 
   Grid3X3, 
-  ArrowRight, 
   Download, 
   Loader2, 
   RotateCw, 
   Trash2, 
   GripVertical,
-  Maximize2
+  Maximize2,
+  FileText,
+  ArrowRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PDFDropzone } from "@/components/tools/PDFDropzone";
-import { organizePDF, processOrganizedPDF } from "@/lib/pdf-service";
+import { processOrganizedPDF } from "@/lib/pdf-service";
 import { saveAs } from "file-saver";
 import { useToast } from "@/hooks/use-toast";
 import * as pdfjsLib from 'pdfjs-dist';
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 // Configure pdfjs worker
 if (typeof window !== "undefined") {
@@ -90,7 +92,7 @@ export default function OrganizePDFPage() {
 
   const handleRemove = (id: string) => {
     setPages(prev => prev.filter(p => p.id !== id));
-    toast({ title: "Page Removed", description: "The page has been removed from the final export." });
+    toast({ title: "Page Removed", description: "The page has been removed from the final sequence." });
   };
 
   const handleProcess = async () => {
@@ -108,8 +110,8 @@ export default function OrganizePDFPage() {
       saveAs(blob, `organized-${files[0].name}`);
       setIsFinished(true);
       toast({
-        title: "PDF Organized",
-        description: "Your customized document has been generated and downloaded.",
+        title: "PDF Generated",
+        description: "Your document with the new page sequence has been downloaded.",
       });
     } catch (error) {
       console.error(error);
@@ -129,9 +131,9 @@ export default function OrganizePDFPage() {
         >
           <Grid3X3 size={32} />
         </motion.div>
-        <h1 className="text-4xl font-bold mb-4 font-headline">Organize PDF</h1>
-        <p className="text-muted-foreground text-lg">
-          Rearrange, rotate, and delete pages visually. Everything stays in your browser.
+        <h1 className="text-4xl font-bold mb-4 font-headline tracking-tight">Organize & Reorder</h1>
+        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          Drag pages to change their sequence. Fix rotations or remove unwanted pages visually before saving.
         </p>
       </div>
 
@@ -142,82 +144,106 @@ export default function OrganizePDFPage() {
               <PDFDropzone files={files} onFilesAdded={handleFilesAdded} onFileRemoved={() => setFiles([])} multiple={false} />
             ) : (
               <div className="space-y-8">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-6 rounded-3xl border shadow-sm">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white p-6 rounded-3xl border shadow-lg">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
-                      <Grid3X3 size={24} />
+                    <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center shadow-inner">
+                      <FileText size={24} />
                     </div>
                     <div>
-                      <h3 className="font-bold">{files[0].name}</h3>
-                      <p className="text-xs text-muted-foreground">{pages.length} pages ready to organize</p>
+                      <h3 className="font-bold text-lg">{files[0].name}</h3>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="font-mono text-[10px]">{pages.length} Pages</Badge>
+                        <p className="text-xs text-muted-foreground italic">Drag thumbnails to reorder</p>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex gap-3">
-                    <Button variant="outline" onClick={() => { setFiles([]); setPages([]); }} disabled={isProcessing}>
+                  <div className="flex gap-3 w-full md:w-auto">
+                    <Button variant="outline" className="flex-1 md:flex-none rounded-full" onClick={() => { setFiles([]); setPages([]); }} disabled={isProcessing}>
                       Change File
                     </Button>
-                    <Button onClick={handleProcess} disabled={isProcessing || pages.length === 0} className="rounded-full px-8 shadow-lg shadow-primary/20">
+                    <Button onClick={handleProcess} disabled={isProcessing || pages.length === 0} className="flex-1 md:flex-none rounded-full px-8 shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90">
                       {isProcessing ? <Loader2 className="animate-spin mr-2" /> : <Download className="mr-2" />}
-                      Save & Download
+                      {isProcessing ? "Processing..." : "Generate PDF"}
                     </Button>
                   </div>
                 </div>
 
                 {isLoadingPages ? (
-                  <div className="flex flex-col items-center justify-center py-32 space-y-4">
-                    <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                    <p className="text-muted-foreground font-medium">Generating page previews...</p>
+                  <div className="flex flex-col items-center justify-center py-32 space-y-6">
+                    <div className="relative">
+                      <Loader2 className="h-16 w-16 animate-spin text-primary opacity-20" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <FileText size={24} className="text-primary animate-pulse" />
+                      </div>
+                    </div>
+                    <p className="text-muted-foreground font-medium animate-pulse">Rendering page previews...</p>
                   </div>
                 ) : (
                   <Reorder.Group 
                     axis="y" 
                     values={pages} 
                     onReorder={setPages} 
-                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6"
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8"
                   >
                     <AnimatePresence>
-                      {pages.map((page) => (
+                      {pages.map((page, index) => (
                         <Reorder.Item
                           key={page.id}
                           value={page}
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.5 }}
-                          whileDrag={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1)" }}
+                          whileDrag={{ scale: 1.05, zIndex: 50 }}
                           className="relative cursor-grab active:cursor-grabbing group"
                         >
-                          <Card className="overflow-hidden border-2 hover:border-primary transition-colors bg-white">
+                          <Card className="overflow-hidden border-2 border-transparent hover:border-primary/50 transition-all duration-300 bg-white shadow-md hover:shadow-xl">
                             <CardContent className="p-0">
-                              <div className="aspect-[3/4] bg-slate-100 relative overflow-hidden flex items-center justify-center">
+                              <div className="aspect-[3/4] bg-slate-50 relative overflow-hidden flex items-center justify-center p-2">
+                                {/* Positioning Badges */}
+                                <div className="absolute top-2 left-2 z-10">
+                                  <Badge className="bg-primary text-white shadow-md font-bold text-[10px] px-2 h-5">
+                                    NEW #{index + 1}
+                                  </Badge>
+                                </div>
+                                <div className="absolute top-2 right-2 z-10">
+                                  <Badge variant="outline" className="bg-white/80 backdrop-blur-sm text-slate-500 text-[10px] border-slate-200">
+                                    ORIG #{page.originalIndex + 1}
+                                  </Badge>
+                                </div>
+
                                 <motion.img 
                                   src={page.thumbnail} 
                                   alt={`Page ${page.originalIndex + 1}`}
                                   animate={{ rotate: page.rotation }}
-                                  className="w-full h-full object-contain"
+                                  className="w-full h-full object-contain shadow-sm rounded-sm"
                                 />
-                                <div className="absolute top-2 right-2 bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">
-                                  {page.originalIndex + 1}
-                                </div>
-                                <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                  <GripVertical className="text-primary" />
+                                
+                                {/* Overlay Controls */}
+                                <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                  <div className="bg-white/90 backdrop-blur-md rounded-full p-2 shadow-lg scale-90 group-hover:scale-100 transition-transform">
+                                    <GripVertical className="text-primary h-5 w-5" />
+                                  </div>
                                 </div>
                               </div>
-                              <div className="p-2 flex items-center justify-between border-t bg-slate-50/50">
+                              
+                              <div className="p-2.5 flex items-center justify-between border-t bg-slate-50/80">
                                 <Button 
                                   variant="ghost" 
                                   size="icon" 
-                                  className="h-8 w-8 text-slate-500 hover:text-primary"
+                                  className="h-9 w-9 text-slate-500 hover:text-primary hover:bg-white rounded-lg transition-colors"
                                   onClick={(e) => { e.stopPropagation(); handleRotate(page.id); }}
+                                  title="Rotate Page"
                                 >
-                                  <RotateCw size={14} />
+                                  <RotateCw size={16} />
                                 </Button>
                                 <Button 
                                   variant="ghost" 
                                   size="icon" 
-                                  className="h-8 w-8 text-slate-500 hover:text-destructive"
+                                  className="h-9 w-9 text-slate-500 hover:text-destructive hover:bg-white rounded-lg transition-colors"
                                   onClick={(e) => { e.stopPropagation(); handleRemove(page.id); }}
+                                  title="Remove Page"
                                 >
-                                  <Trash2 size={14} />
+                                  <Trash2 size={16} />
                                 </Button>
                               </div>
                             </CardContent>
@@ -234,47 +260,58 @@ export default function OrganizePDFPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white border rounded-3xl p-12 text-center shadow-xl max-w-2xl mx-auto"
+            className="bg-white border rounded-3xl p-16 text-center shadow-2xl max-w-2xl mx-auto"
           >
-            <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Download size={40} />
+            <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
+              <Download size={48} />
             </div>
-            <h2 className="text-3xl font-bold mb-4">PDF Organized!</h2>
-            <p className="text-muted-foreground mb-10">
-              Your new document with custom page order and rotations has been downloaded.
+            <h2 className="text-3xl font-bold mb-4 font-headline">New Sequence Ready!</h2>
+            <p className="text-muted-foreground mb-10 text-lg">
+              Your document with the requested page order and orientation has been processed and downloaded.
             </p>
-            <div className="flex gap-4 justify-center">
-              <Button size="lg" className="rounded-full h-12" onClick={() => { setFiles([]); setPages([]); setIsFinished(false); }}>
-                Start Over
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="rounded-full h-14 px-10 text-lg shadow-lg" onClick={() => { setFiles([]); setPages([]); setIsFinished(false); }}>
+                Organize Another
               </Button>
             </div>
           </motion.div>
         )}
       </div>
 
-      <div className="mt-20 pt-10 border-t">
-        <h3 className="text-2xl font-bold mb-8">Professional Workspace Features</h3>
+      <div className="mt-24 pt-12 border-t">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+            <Maximize2 size={20} />
+          </div>
+          <h3 className="text-2xl font-bold font-headline">Smart Organizing Features</h3>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="p-6 bg-slate-50 rounded-2xl border">
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-primary shadow-sm mb-4">
-              <Maximize2 size={18} />
-            </div>
-            <h4 className="font-bold mb-2">Visual Previews</h4>
-            <p className="text-sm text-muted-foreground">See exactly what's on every page before you make changes.</p>
+          <div className="group p-8 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all">
+            <h4 className="font-bold text-lg mb-3 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center">1</span>
+              Visual Sequence
+            </h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Instantly see the new order of your PDF. Every thumbnail updates its "NEW" position number as you drag it, ensuring complete clarity.
+            </p>
           </div>
-          <div className="p-6 bg-slate-50 rounded-2xl border">
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-primary shadow-sm mb-4">
-              <RotateCw size={18} />
-            </div>
-            <h4 className="font-bold mb-2">Instant Rotation</h4>
-            <p className="text-sm text-muted-foreground">Fix upside-down or sideways pages with a single click.</p>
+          <div className="group p-8 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all">
+            <h4 className="font-bold text-lg mb-3 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center">2</span>
+              Selective Cleanup
+            </h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Clean up your document as you reorder. Use the trash icon to strip out blank pages or unnecessary content from the final output.
+            </p>
           </div>
-          <div className="p-6 bg-slate-50 rounded-2xl border">
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-primary shadow-sm mb-4">
-              <GripVertical size={18} />
-            </div>
-            <h4 className="font-bold mb-2">Drag & Drop</h4>
-            <p className="text-sm text-muted-foreground">Reorder pages intuitively by dragging them into your desired sequence.</p>
+          <div className="group p-8 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all">
+            <h4 className="font-bold text-lg mb-3 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center">3</span>
+              Bulk Rotation
+            </h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Fix landscape or upside-down pages individually. The 90° clockwise rotation ensures your document looks professional on any device.
+            </p>
           </div>
         </div>
       </div>
