@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, use } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { 
   Combine, 
@@ -161,6 +162,20 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="text-center lg:text-left"
             >
+              {/* Added Logo at the Top */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="relative w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-2xl shadow-xl flex items-center justify-center overflow-hidden border mx-auto lg:mx-0 mb-8"
+              >
+                <Image 
+                  src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png" 
+                  alt="IndigoPDF Logo"
+                  fill
+                  className="object-contain p-2"
+                />
+              </motion.div>
+
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold mb-6 sm:mb-8 border border-primary/20">
                 <Zap size={14} className="fill-primary" />
                 <span>100% Private Browser-Based PDF Tools</span>
