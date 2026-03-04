@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { FileText, Github, Twitter, Linkedin } from "lucide-react";
+import { FileText, Github, Linkedin } from "lucide-react";
 
 export function Footer() {
   return (
@@ -46,13 +46,33 @@ export function Footer() {
           </div>
         </div>
         <div className="pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} IndigoPDF. All rights reserved.
-          </p>
+          <div className="flex flex-col gap-1 text-center md:text-left">
+            <p className="text-xs text-muted-foreground">
+              © {new Date().getFullYear()} IndigoPDF. All rights reserved.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Made By <Link href="https://sourishdeyportfolio.vercel.app/" target="_blank" rel="noopener noreferrer" className="hover:text-primary font-medium underline underline-offset-2">Sourish Dey</Link>
+            </p>
+          </div>
           <div className="flex items-center gap-4">
-            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors"><Twitter size={18} /></Link>
-            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors"><Github size={18} /></Link>
-            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors"><Linkedin size={18} /></Link>
+            <Link 
+              href="https://github.com/sourishdey2005" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-muted-foreground hover:text-primary transition-colors"
+              title="GitHub"
+            >
+              <Github size={18} />
+            </Link>
+            <Link 
+              href="https://www.linkedin.com/in/sourish-dey-20b170206/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-muted-foreground hover:text-primary transition-colors"
+              title="LinkedIn"
+            >
+              <Linkedin size={18} />
+            </Link>
           </div>
         </div>
       </div>
