@@ -494,3 +494,27 @@ export async function editPDF(file: File, options: EditOptions): Promise<Uint8Ar
   
   return await pdfDoc.save();
 }
+
+export async function cropPDF(file: File, margins: { top: number, bottom: number, left: number, right: number }): Promise<Uint8Array> {
+  const { PDFDocument } = await import('pdf-lib');
+  const arrayBuffer = await file.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(arrayBuffer);
+  const pages = pdfDoc.getPages();
+
+  pages.forEach(page => {
+    const { width, height } = page.getSize();
+    
+    // In PDF coordinates, (0,0) is bottom-left.
+    // margins are in points.
+    const newX = margins.left;
+    const newY = margins.bottom;
+    const newWidth = width - margins.left - margins.right;
+    const newHeight = height - margins.top - margins.bottom;
+
+    if (newWidth > 0 && newHeight > 0) {
+      page.setCropBox(newX, newY, newWidth, newHeight);
+    }
+  });
+
+  return await pdfDoc.save();
+}
