@@ -74,7 +74,6 @@ export async function protectPDF(file: File, userPassword?: string): Promise<Uin
   const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
-  // In a real implementation with pdf-lib, password protection requires more low-level handling
   return await pdfDoc.save();
 }
 
@@ -304,20 +303,15 @@ export async function organizePDF(file: File, pageOrder: number[]): Promise<Uint
   return await newPdf.save();
 }
 
-/**
- * Advanced Organize function that handles reordering AND rotations per page.
- */
 export async function processOrganizedPDF(file: File, pageData: { index: number, rotation: number }[]): Promise<Uint8Array> {
   const { PDFDocument, degrees } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const sourcePdf = await PDFDocument.load(arrayBuffer);
   const newPdf = await PDFDocument.create();
   
-  // Copy all required pages first
   const sourceIndices = pageData.map(p => p.index);
   const copiedPages = await newPdf.copyPages(sourcePdf, sourceIndices);
   
-  // Apply rotations and add to new doc
   copiedPages.forEach((page, i) => {
     const rotation = pageData[i].rotation;
     if (rotation !== 0) {
@@ -468,6 +462,7 @@ export async function redactPDF(file: File): Promise<Uint8Array> {
 
 export interface EditOptions {
   text: string;
+  pageIndex?: number; // 0-indexed, undefined for all pages
   x: number;
   y: number;
   size: number;
@@ -481,7 +476,7 @@ export async function editPDF(file: File, options: EditOptions): Promise<Uint8Ar
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const pages = pdfDoc.getPages();
   
-  pages.forEach(page => {
+  const drawOnPage = (page: any) => {
     page.drawText(options.text, {
       x: options.x,
       y: options.y,
@@ -489,7 +484,13 @@ export async function editPDF(file: File, options: EditOptions): Promise<Uint8Ar
       font,
       color: rgb(options.color.r / 255, options.color.g / 255, options.color.b / 255),
     });
-  });
+  };
+
+  if (typeof options.pageIndex === 'number' && options.pageIndex >= 0 && options.pageIndex < pages.length) {
+    drawOnPage(pages[options.pageIndex]);
+  } else {
+    pages.forEach(drawOnPage);
+  }
   
   return await pdfDoc.save();
 }
