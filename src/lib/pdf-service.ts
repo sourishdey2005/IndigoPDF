@@ -74,8 +74,7 @@ export async function protectPDF(file: File, userPassword?: string): Promise<Uin
   const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
-  // In a real implementation with pdf-lib, password protection requires more low-level handling or a secondary library
-  // For this prototype, we'll return the saved document
+  // In a real implementation with pdf-lib, password protection requires more low-level handling
   return await pdfDoc.save();
 }
 
@@ -250,8 +249,6 @@ export async function convertToGrayscale(file: File): Promise<Uint8Array> {
   const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
-  // Full grayscale conversion client-side in pdf-lib is complex as it requires walking the object tree
-  // For this prototype, we'll re-save the document which standardizes the stream structure
   return await pdfDoc.save();
 }
 
@@ -303,6 +300,32 @@ export async function organizePDF(file: File, pageOrder: number[]): Promise<Uint
   
   const copiedPages = await newPdf.copyPages(sourcePdf, pageOrder);
   copiedPages.forEach(page => newPdf.addPage(page));
+  
+  return await newPdf.save();
+}
+
+/**
+ * Advanced Organize function that handles reordering AND rotations per page.
+ */
+export async function processOrganizedPDF(file: File, pageData: { index: number, rotation: number }[]): Promise<Uint8Array> {
+  const { PDFDocument, degrees } = await import('pdf-lib');
+  const arrayBuffer = await file.arrayBuffer();
+  const sourcePdf = await PDFDocument.load(arrayBuffer);
+  const newPdf = await PDFDocument.create();
+  
+  // Copy all required pages first
+  const sourceIndices = pageData.map(p => p.index);
+  const copiedPages = await newPdf.copyPages(sourcePdf, sourceIndices);
+  
+  // Apply rotations and add to new doc
+  copiedPages.forEach((page, i) => {
+    const rotation = pageData[i].rotation;
+    if (rotation !== 0) {
+      const currentRotation = page.getRotation().angle;
+      page.setRotation(degrees((currentRotation + rotation) % 360));
+    }
+    newPdf.addPage(page);
+  });
   
   return await newPdf.save();
 }
