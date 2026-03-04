@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -11,9 +10,9 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 
-// Configure pdfjs worker
+// Configure pdfjs worker to use the correct ESM format for version 4+
 if (typeof window !== "undefined") {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 }
 
 export default function OCRPDFPage() {
@@ -70,7 +69,7 @@ export default function OCRPDFPage() {
       console.error(error);
       toast({
         title: "Error",
-        description: "Failed to perform OCR on the document.",
+        description: "Failed to perform OCR on the document. Ensure it is a valid PDF.",
         variant: "destructive",
       });
     } finally {
