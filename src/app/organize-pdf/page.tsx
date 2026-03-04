@@ -11,7 +11,9 @@ import {
   GripVertical,
   Maximize2,
   FileText,
-  ArrowRight
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PDFDropzone } from "@/components/tools/PDFDropzone";
@@ -95,6 +97,17 @@ export default function OrganizePDFPage() {
     toast({ title: "Page Removed", description: "The page has been removed from the final sequence." });
   };
 
+  const movePage = (index: number, direction: 'prev' | 'next') => {
+    const newPages = [...pages];
+    const targetIndex = direction === 'prev' ? index - 1 : index + 1;
+    
+    if (targetIndex < 0 || targetIndex >= newPages.length) return;
+    
+    const [movedItem] = newPages.splice(index, 1);
+    newPages.splice(targetIndex, 0, movedItem);
+    setPages(newPages);
+  };
+
   const handleProcess = async () => {
     if (files.length === 0 || pages.length === 0) return;
 
@@ -133,7 +146,7 @@ export default function OrganizePDFPage() {
         </motion.div>
         <h1 className="text-4xl font-bold mb-4 font-headline tracking-tight">Organize & Reorder</h1>
         <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          Drag pages to change their sequence. Fix rotations or remove unwanted pages visually before saving.
+          Drag pages or use the arrows to change their sequence. Fix rotations or remove unwanted pages visually.
         </p>
       </div>
 
@@ -144,7 +157,7 @@ export default function OrganizePDFPage() {
               <PDFDropzone files={files} onFilesAdded={handleFilesAdded} onFileRemoved={() => setFiles([])} multiple={false} />
             ) : (
               <div className="space-y-8">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white p-6 rounded-3xl border shadow-lg">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white p-6 rounded-3xl border shadow-lg sticky top-24 z-30">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center shadow-inner">
                       <FileText size={24} />
@@ -153,7 +166,7 @@ export default function OrganizePDFPage() {
                       <h3 className="font-bold text-lg">{files[0].name}</h3>
                       <div className="flex items-center gap-2">
                         <Badge variant="secondary" className="font-mono text-[10px]">{pages.length} Pages</Badge>
-                        <p className="text-xs text-muted-foreground italic">Drag thumbnails to reorder</p>
+                        <p className="text-xs text-muted-foreground italic">Drag or use arrows to reorder</p>
                       </div>
                     </div>
                   </div>
@@ -179,79 +192,99 @@ export default function OrganizePDFPage() {
                     <p className="text-muted-foreground font-medium animate-pulse">Rendering page previews...</p>
                   </div>
                 ) : (
-                  <Reorder.Group 
-                    axis="y" 
-                    values={pages} 
-                    onReorder={setPages} 
-                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8"
-                  >
-                    <AnimatePresence>
-                      {pages.map((page, index) => (
-                        <Reorder.Item
-                          key={page.id}
-                          value={page}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.5 }}
-                          whileDrag={{ scale: 1.05, zIndex: 50 }}
-                          className="relative cursor-grab active:cursor-grabbing group"
-                        >
-                          <Card className="overflow-hidden border-2 border-transparent hover:border-primary/50 transition-all duration-300 bg-white shadow-md hover:shadow-xl">
-                            <CardContent className="p-0">
-                              <div className="aspect-[3/4] bg-slate-50 relative overflow-hidden flex items-center justify-center p-2">
-                                {/* Positioning Badges */}
-                                <div className="absolute top-2 left-2 z-10">
-                                  <Badge className="bg-primary text-white shadow-md font-bold text-[10px] px-2 h-5">
-                                    NEW #{index + 1}
-                                  </Badge>
-                                </div>
-                                <div className="absolute top-2 right-2 z-10">
-                                  <Badge variant="outline" className="bg-white/80 backdrop-blur-sm text-slate-500 text-[10px] border-slate-200">
-                                    ORIG #{page.originalIndex + 1}
-                                  </Badge>
-                                </div>
+                  <div className="p-4 bg-slate-50/50 rounded-3xl border border-dashed border-slate-200">
+                    <Reorder.Group 
+                      axis="y" 
+                      values={pages} 
+                      onReorder={setPages} 
+                      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 sm:gap-8"
+                    >
+                      <AnimatePresence initial={false}>
+                        {pages.map((page, index) => (
+                          <Reorder.Item
+                            key={page.id}
+                            value={page}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.5 }}
+                            whileDrag={{ scale: 1.05, zIndex: 50 }}
+                            className="relative cursor-grab active:cursor-grabbing group h-full"
+                          >
+                            <Card className="overflow-hidden h-full border-2 border-transparent hover:border-primary/50 transition-all duration-300 bg-white shadow-md hover:shadow-xl">
+                              <CardContent className="p-0 flex flex-col h-full">
+                                <div className="aspect-[3/4] bg-slate-50 relative overflow-hidden flex items-center justify-center p-2">
+                                  {/* Positioning Badges */}
+                                  <div className="absolute top-2 left-2 z-10">
+                                    <Badge className="bg-primary text-white shadow-md font-bold text-[10px] px-2 h-5">
+                                      #{index + 1}
+                                    </Badge>
+                                  </div>
 
-                                <motion.img 
-                                  src={page.thumbnail} 
-                                  alt={`Page ${page.originalIndex + 1}`}
-                                  animate={{ rotate: page.rotation }}
-                                  className="w-full h-full object-contain shadow-sm rounded-sm"
-                                />
-                                
-                                {/* Overlay Controls */}
-                                <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                  <div className="bg-white/90 backdrop-blur-md rounded-full p-2 shadow-lg scale-90 group-hover:scale-100 transition-transform">
-                                    <GripVertical className="text-primary h-5 w-5" />
+                                  <motion.img 
+                                    src={page.thumbnail} 
+                                    alt={`Page ${page.originalIndex + 1}`}
+                                    animate={{ rotate: page.rotation }}
+                                    className="w-full h-full object-contain shadow-sm rounded-sm"
+                                  />
+                                  
+                                  {/* Overlay Drag Handle */}
+                                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                    <div className="bg-white/90 backdrop-blur-md rounded-full p-2 shadow-lg">
+                                      <GripVertical className="text-primary h-5 w-5" />
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                              
-                              <div className="p-2.5 flex items-center justify-between border-t bg-slate-50/80">
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="h-9 w-9 text-slate-500 hover:text-primary hover:bg-white rounded-lg transition-colors"
-                                  onClick={(e) => { e.stopPropagation(); handleRotate(page.id); }}
-                                  title="Rotate Page"
-                                >
-                                  <RotateCw size={16} />
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="h-9 w-9 text-slate-500 hover:text-destructive hover:bg-white rounded-lg transition-colors"
-                                  onClick={(e) => { e.stopPropagation(); handleRemove(page.id); }}
-                                  title="Remove Page"
-                                >
-                                  <Trash2 size={16} />
-                                </Button>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </Reorder.Item>
-                      ))}
-                    </AnimatePresence>
-                  </Reorder.Group>
+                                
+                                <div className="p-2 flex flex-col gap-2 border-t bg-slate-50/80 mt-auto">
+                                  {/* Arrow Controls */}
+                                  <div className="flex items-center justify-between gap-1">
+                                    <Button 
+                                      variant="ghost" 
+                                      size="icon" 
+                                      className="h-8 w-8 text-slate-500 hover:text-primary hover:bg-white rounded-md disabled:opacity-30"
+                                      onClick={(e) => { e.stopPropagation(); movePage(index, 'prev'); }}
+                                      disabled={index === 0}
+                                    >
+                                      <ChevronLeft size={16} />
+                                    </Button>
+                                    <span className="text-[10px] font-bold text-slate-400">MOVE</span>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="icon" 
+                                      className="h-8 w-8 text-slate-500 hover:text-primary hover:bg-white rounded-md disabled:opacity-30"
+                                      onClick={(e) => { e.stopPropagation(); movePage(index, 'next'); }}
+                                      disabled={index === pages.length - 1}
+                                    >
+                                      <ChevronRight size={16} />
+                                    </Button>
+                                  </div>
+                                  
+                                  <div className="flex items-center justify-between pt-1 border-t border-slate-200/50">
+                                    <Button 
+                                      variant="ghost" 
+                                      size="icon" 
+                                      className="h-8 w-8 text-slate-500 hover:text-primary hover:bg-white rounded-md transition-colors"
+                                      onClick={(e) => { e.stopPropagation(); handleRotate(page.id); }}
+                                    >
+                                      <RotateCw size={14} />
+                                    </Button>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="icon" 
+                                      className="h-8 w-8 text-slate-500 hover:text-destructive hover:bg-white rounded-md transition-colors"
+                                      onClick={(e) => { e.stopPropagation(); handleRemove(page.id); }}
+                                    >
+                                      <Trash2 size={14} />
+                                    </Button>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </Reorder.Item>
+                        ))}
+                      </AnimatePresence>
+                    </Reorder.Group>
+                  </div>
                 )}
               </div>
             )}
@@ -265,9 +298,9 @@ export default function OrganizePDFPage() {
             <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
               <Download size={48} />
             </div>
-            <h2 className="text-3xl font-bold mb-4 font-headline">New Sequence Ready!</h2>
-            <p className="text-muted-foreground mb-10 text-lg">
-              Your document with the requested page order and orientation has been processed and downloaded.
+            <h2 className="text-3xl font-bold mb-4 font-headline text-emerald-600">Document Ready!</h2>
+            <p className="text-muted-foreground mb-10 text-lg leading-relaxed">
+              Your document with the new page sequence and rotations has been processed and downloaded successfully.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="rounded-full h-14 px-10 text-lg shadow-lg" onClick={() => { setFiles([]); setPages([]); setIsFinished(false); }}>
@@ -283,34 +316,34 @@ export default function OrganizePDFPage() {
           <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
             <Maximize2 size={20} />
           </div>
-          <h3 className="text-2xl font-bold font-headline">Smart Organizing Features</h3>
+          <h3 className="text-2xl font-bold font-headline">Professional Organizing</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="group p-8 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all">
             <h4 className="font-bold text-lg mb-3 flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center">1</span>
-              Visual Sequence
+              Precision Arrows
             </h4>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Instantly see the new order of your PDF. Every thumbnail updates its "NEW" position number as you drag it, ensuring complete clarity.
+              Use the navigation arrows to move pages one-by-one with absolute precision, perfect for complex document restructuring.
             </p>
           </div>
           <div className="group p-8 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all">
             <h4 className="font-bold text-lg mb-3 flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center">2</span>
-              Selective Cleanup
+              Drag & Drop
             </h4>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Clean up your document as you reorder. Use the trash icon to strip out blank pages or unnecessary content from the final output.
+              Instantly reorder large sections of your PDF by dragging thumbnails anywhere in the grid with real-time feedback.
             </p>
           </div>
           <div className="group p-8 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all">
             <h4 className="font-bold text-lg mb-3 flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center">3</span>
-              Bulk Rotation
+              Bulk Management
             </h4>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Fix landscape or upside-down pages individually. The 90° clockwise rotation ensures your document looks professional on any device.
+              Fix rotations or strip out unwanted pages visually as you organize, ensuring your final output is exactly as needed.
             </p>
           </div>
         </div>
