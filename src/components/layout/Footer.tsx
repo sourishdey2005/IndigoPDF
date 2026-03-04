@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import Image from "next/image";
 import { Github, Linkedin, Globe, ExternalLink, Smartphone } from "lucide-react";
@@ -9,7 +10,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           <div className="col-span-1 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="relative w-8 h-8 bg-white rounded-lg flex items-center justify-center overflow-hidden border">
+              <div className="relative w-10 h-10 bg-white rounded-lg flex items-center justify-center overflow-hidden border">
                 <Image 
                   src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png" 
                   alt="IndigoPDF Logo" 
@@ -98,7 +99,7 @@ export function Footer() {
               rel="noopener noreferrer" 
               className="block transition-transform hover:scale-105 active:scale-95"
             >
-              <div className="relative w-[160px] h-[48px] overflow-hidden rounded-lg shadow-md border bg-white flex items-center justify-center">
+              <div className="relative w-[200px] h-[60px] overflow-hidden rounded-lg shadow-md border bg-white flex items-center justify-center">
                 <Image 
                   src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772635160/IndigoPDF_kw0cqb.png" 
                   alt="Download IndigoPDF APK" 
@@ -107,7 +108,7 @@ export function Footer() {
                 />
               </div>
             </Link>
-            <p className="text-[10px] text-muted-foreground leading-tight max-w-[160px]">
+            <p className="text-xs text-muted-foreground leading-tight max-w-[200px]">
               Take IndigoPDF on the go. Download the official APK for your Android device.
             </p>
           </div>
