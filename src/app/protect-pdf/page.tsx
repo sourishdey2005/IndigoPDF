@@ -1,9 +1,8 @@
-
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Lock, ArrowRight, Download, Loader2 } from "lucide-react";
+import { Lock, ArrowRight, Download, Loader2, ShieldAlert, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,16 +10,47 @@ import { PDFDropzone } from "@/components/tools/PDFDropzone";
 import { protectPDF } from "@/lib/pdf-service";
 import { saveAs } from "file-saver";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent } from "@/components/ui/card";
+import * as pdfjsLib from 'pdfjs-dist';
+
+if (typeof window !== "undefined") {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+}
 
 export default function ProtectPDFPage() {
   const [files, setFiles] = useState<File[]>([]);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [password, setPassword] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoadingThumbnail, setIsLoadingThumbnail] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const { toast } = useToast();
 
+  const loadThumbnail = useCallback(async (file: File) => {
+    setIsLoadingThumbnail(true);
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const page = await pdf.getPage(1);
+      const viewport = page.getViewport({ scale: 0.4 });
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      if (!context) return;
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      await page.render({ canvasContext: context, viewport }).promise;
+      setThumbnail(canvas.toDataURL('image/jpeg', 0.8));
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoadingThumbnail(false);
+    }
+  }, []);
+
   const handleFilesAdded = (newFiles: File[]) => {
-    setFiles([newFiles[0]]);
+    const file = newFiles[0];
+    setFiles([file]);
+    loadThumbnail(file);
     setIsFinished(false);
   };
 
@@ -59,17 +89,11 @@ export default function ProtectPDFPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <div className="text-center mb-12">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mx-auto mb-6"
-        >
+        <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mx-auto mb-6">
           <Lock size={32} />
         </motion.div>
-        <h1 className="text-4xl font-bold mb-4 font-headline">Protect PDF</h1>
-        <p className="text-muted-foreground text-lg">
-          Encrypt your PDF with a password to prevent unauthorized access.
-        </p>
+        <h1 className="text-4xl font-bold mb-4 font-headline tracking-tight">Protect PDF Document</h1>
+        <p className="text-muted-foreground text-lg">Secure your sensitive PDF files with high-strength password encryption.</p>
       </div>
 
       <div className="space-y-8">
@@ -78,16 +102,57 @@ export default function ProtectPDFPage() {
             <PDFDropzone 
               files={files} 
               onFilesAdded={handleFilesAdded} 
-              onFileRemoved={() => setFiles([])} 
+              onFileRemoved={() => { setFiles([]); setThumbnail(null); }} 
               multiple={false}
             />
             
             {files.length > 0 && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-white p-6 border rounded-2xl max-w-sm mx-auto">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="pass">Set Password</Label>
-                    <Input id="pass" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter password..." />
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }} 
+                animate={{ opacity: 1, y: 0 }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-8"
+              >
+                <Card className="bg-white border-none shadow-xl rounded-3xl p-8 flex flex-col justify-center">
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-2 text-primary font-bold">
+                      <ShieldAlert size={18} />
+                      <span>Security Settings</span>
+                    </div>
+                    <div className="space-y-3">
+                      <Label htmlFor="pass">Set Encryption Password</Label>
+                      <Input 
+                        id="pass" 
+                        type="password" 
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        placeholder="Enter a strong password..." 
+                        className="h-12"
+                      />
+                      <p className="text-[10px] text-muted-foreground italic leading-tight">
+                        Warning: This operation permanently encrypts your document. You will need this password to open it later.
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-2 font-bold px-2">
+                    <FileText size={18} className="text-slate-400" />
+                    <span>Document Preview</span>
+                  </div>
+                  <div className="aspect-[3/4] bg-slate-100 rounded-3xl border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center relative shadow-inner">
+                    {isLoadingThumbnail ? (
+                      <Loader2 className="animate-spin text-primary" />
+                    ) : thumbnail ? (
+                      <div className="relative w-full h-full">
+                        <img src={thumbnail} alt="PDF Preview" className="w-full h-full object-contain p-4 opacity-50 blur-[2px]" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Lock size={48} className="text-primary/50" />
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">Preview loading...</span>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -98,19 +163,39 @@ export default function ProtectPDFPage() {
                 size="lg"
                 disabled={files.length === 0 || isProcessing || !password}
                 onClick={handleProcess}
-                className="rounded-full h-14 px-10 text-lg shadow-xl shadow-primary/20 min-w-[200px]"
+                className="rounded-full h-14 px-12 text-lg font-bold shadow-xl shadow-primary/20 transition-all hover:scale-105"
               >
-                {isProcessing ? <Loader2 className="animate-spin" /> : "Encrypt PDF"}
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="animate-spin mr-2 h-5 w-5" />
+                    Encrypting...
+                  </>
+                ) : (
+                  <>
+                    Encrypt PDF
+                    <Lock className="ml-2 h-4 w-4" />
+                  </>
+                )}
               </Button>
             </div>
           </>
         ) : (
-          <div className="text-center bg-white border p-12 rounded-3xl shadow-xl">
-            <Download size={48} className="mx-auto mb-4 text-emerald-500" />
-            <h2 className="text-2xl font-bold mb-2">Security Applied</h2>
-            <p className="text-muted-foreground mb-6">Your protected PDF has been downloaded.</p>
-            <Button onClick={() => setIsFinished(false)}>Protect Another</Button>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center p-16 bg-white border rounded-3xl shadow-2xl max-w-2xl mx-auto"
+          >
+            <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
+              <Download size={48} />
+            </div>
+            <h2 className="text-3xl font-bold mb-4 font-headline text-emerald-600">Security Applied</h2>
+            <p className="text-muted-foreground mb-10 text-lg leading-relaxed">
+              Your document has been successfully encrypted with your password and downloaded.
+            </p>
+            <Button onClick={() => { setFiles([]); setThumbnail(null); setPassword(""); setIsFinished(false); }} className="rounded-full h-14 px-10 text-lg">
+              Protect Another Document
+            </Button>
+          </motion.div>
         )}
       </div>
     </div>
