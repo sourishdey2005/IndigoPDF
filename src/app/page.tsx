@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState } from "react";
+import { useState, use } from "react";
 import { motion } from "framer-motion";
 import { 
   Combine, 
@@ -19,10 +18,6 @@ import {
   LayoutGrid,
   FileSpreadsheet,
   Presentation,
-  FileCode,
-  PenTool,
-  Globe,
-  Camera,
   Layers,
   Wrench,
   Search,
@@ -31,13 +26,14 @@ import {
   Languages,
   ArrowRight,
   HelpCircle,
-  FileQuestion,
-  Info,
   XCircle,
   Hash,
   Palette,
   Edit3,
-  Code
+  Code,
+  PenTool,
+  Globe,
+  Camera
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ToolCard } from "@/components/tools/ToolCard";
@@ -86,7 +82,7 @@ const tools = [
   { id: 'page-nums', title: "Page Numbers", description: "Add sequential page numbering with custom positioning.", icon: Type, href: "/page-numbers", category: "Edit" },
   { id: 'bates', title: "Bates Numbering", description: "Apply legal-grade Bates numbering to your business documents.", icon: Hash, href: "/bates-numbering", category: "Edit" },
   { id: 'crop', title: "Crop PDF", description: "Precisely crop margins or specific areas of your PDF document.", icon: Crop, href: "/crop-pdf", category: "Edit" },
-  { id: 'metadata', title: "Metadata Editor", description: "Edit Title, Author, Subject, and Keywords of your PDF files.", icon: Info, href: "/add-metadata", category: "Edit" },
+  { id: 'metadata', title: "Metadata Editor", description: "Edit Title, Author, Subject, and Keywords of your PDF files.", icon: ShieldCheck, href: "/add-metadata", category: "Edit" },
   
   // Security
   { id: 'protect', title: "Protect PDF", description: "Secure your PDF files with high-strength password encryption.", icon: Lock, href: "/protect-pdf", category: "Security" },
@@ -105,23 +101,23 @@ const tools = [
 const faqs = [
   {
     question: "Is IndigoPDF really free?",
-    answer: "Yes, absolutely! All our PDF tools are 100% free to use with no hidden subscriptions, watermarks, or page limits. We provide high-quality PDF processing because we believe privacy-respecting tools should be accessible to everyone."
+    answer: "Yes, absolutely! All our PDF tools are 100% free to use with no hidden subscriptions, watermarks, or page limits."
   },
   {
     question: "How secure is my data?",
-    answer: "IndigoPDF is uniquely secure. Unlike standard online PDF converters, our tools process your files directly in your browser using WebAssembly. Your documents are never uploaded to our servers, meaning your sensitive data never leaves your device."
+    answer: "IndigoPDF processes your files directly in your browser. Your documents are never uploaded to our servers, meaning your sensitive data never leaves your device."
   },
   {
     question: "Do I need to install software?",
-    answer: "No installation is required. IndigoPDF is a progressive web app that works directly in any modern browser on Windows, macOS, Linux, iOS, and Android."
-  },
-  {
-    question: "Are there file size limits?",
-    answer: "The only limit is your device's memory. Since all processing happens locally, extremely large files (e.g., over 1GB) might be limited by your browser's RAM, but IndigoPDF does not impose any artificial software limits."
+    answer: "No installation is required. IndigoPDF works directly in any modern browser."
   }
 ];
 
-export default function Home() {
+export default function Home(props: { params: Promise<any>; searchParams: Promise<any> }) {
+  // Await promises in Client Component to prevent Next.js 15 enumeration warnings
+  use(props.params);
+  use(props.searchParams);
+  
   const [activeTab, setActiveTab] = useState("All");
 
   const filteredTools = activeTab === "All" 
@@ -130,19 +126,10 @@ export default function Home() {
 
   return (
     <div className="flex flex-col w-full">
-      {/* Hero Section - Optimized for SEO */}
+      {/* Hero Section */}
       <section className="relative py-20 lg:py-32 overflow-hidden bg-slate-50 dark:bg-slate-900/50">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full opacity-30 pointer-events-none">
-          <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
-        </div>
-        
         <div className="container mx-auto px-4 relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6">
               <Zap size={14} className="fill-primary" />
               <span>100% Private Browser-Based PDF Tools</span>
@@ -152,17 +139,12 @@ export default function Home() {
               <span className="text-primary">PDF Power Tools</span>
             </h1>
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed">
-              Professional-grade PDF management without the privacy risk. <strong>Merge, Split, Compress, OCR, and Convert</strong> your documents locally in your browser. Fast, free, and no file uploads required.
+              Professional-grade PDF management without the privacy risk. <strong>Merge, Split, Compress, OCR, and Convert</strong> your documents locally in your browser.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a href="#tools">
-                <Button size="lg" className="rounded-full h-14 px-8 text-lg font-semibold shadow-xl shadow-primary/20" aria-label="Explore all PDF tools">
+                <Button size="lg" className="rounded-full h-14 px-8 text-lg font-semibold shadow-xl shadow-primary/20">
                   Explore Tools
-                </Button>
-              </a>
-              <a href="#how-it-works">
-                <Button size="lg" variant="outline" className="rounded-full h-14 px-8 text-lg bg-white dark:bg-slate-800" aria-label="Learn how IndigoPDF works">
-                  How it Works
                 </Button>
               </a>
             </div>
@@ -200,63 +182,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it Works Section */}
-      <section id="how-it-works" className="py-24 bg-white dark:bg-slate-900/20 border-y">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">How it Works</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Get professional results in three simple steps, without your files ever leaving your device.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {[
-              { step: "01", title: "Select Tool", desc: "Choose from over 35+ professional PDF tools designed for every document need.", icon: Grid3X3 },
-              { step: "02", title: "Upload & Process", desc: "Drag and drop your files. High-speed processing happens instantly in your local browser.", icon: Zap },
-              { step: "03", title: "Download Result", desc: "Get your optimized document immediately. Fast, secure, and always 100% free.", icon: ArrowRight }
-            ].map((item, idx) => (
-              <div key={idx} className="relative group p-8 rounded-3xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 hover:bg-white dark:hover:bg-slate-800 hover:shadow-xl transition-all">
-                <div className="text-6xl font-black text-primary/5 absolute top-4 right-8" aria-hidden="true">{item.step}</div>
-                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6">
-                  <item.icon size={28} />
-                </div>
-                <h3 className="text-2xl font-bold mb-4">{item.title}</h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Section */}
-      <section className="py-20 bg-slate-900 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-16">Why Choose IndigoPDF?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mb-6 text-primary">
-                <ShieldCheck size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-4">Unmatched Privacy</h3>
-              <p className="text-slate-400">Processing occurs entirely in your browser. Your files never touch our servers, ensuring your sensitive data stays strictly yours.</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 rounded-2xl bg-secondary/20 flex items-center justify-center mb-6 text-secondary">
-                <Zap size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-4">Elite Performance</h3>
-              <p className="text-slate-400">Powered by advanced WebAssembly and browser-side AI, our tools provide near-instant results without internet latency.</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 rounded-2xl bg-accent/20 flex items-center justify-center mb-6 text-accent">
-                <Languages size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-4">AI Smart Features</h3>
-              <p className="text-slate-400">From intelligent OCR to layout-preserving translation, we use next-gen local AI models to simplify your PDF workflow.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* FAQ Section */}
       <section id="faq" className="py-24 bg-slate-50 dark:bg-slate-950">
         <div className="container mx-auto px-4 max-w-3xl">
@@ -265,14 +190,13 @@ export default function Home() {
               <HelpCircle className="text-primary" />
               Frequently Asked Questions
             </h2>
-            <p className="text-muted-foreground">Everything you need to know about IndigoPDF security, privacy, and features.</p>
           </div>
           
           <Accordion type="single" collapsible className="w-full space-y-4">
             {faqs.map((faq, idx) => (
-              <AccordionItem key={idx} value={`item-${idx}`} className="bg-white dark:bg-slate-900 px-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+              <AccordionItem key={idx} value={`item-${idx}`} className="bg-white dark:bg-slate-900 px-6 rounded-2xl border">
                 <AccordionTrigger className="text-lg font-bold hover:no-underline">{faq.question}</AccordionTrigger>
-                <AccordionContent className="text-slate-600 dark:text-slate-400 text-base pb-6 leading-relaxed">
+                <AccordionContent className="text-slate-600 dark:text-slate-400 text-base pb-6">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>

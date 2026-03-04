@@ -1,4 +1,3 @@
-
 import type {Metadata} from 'next';
 import './globals.css';
 import { Header } from '@/components/layout/Header';
@@ -15,11 +14,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+export default async function RootLayout(props: {
   children: React.ReactNode;
-}>) {
+  params: Promise<any>;
+}) {
+  // Await params to prevent Next.js 15 enumeration warnings
+  await props.params;
+  const { children } = props;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>

@@ -1,9 +1,14 @@
 "use client";
 
+import { use } from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, Lock, EyeOff } from "lucide-react";
 
-export default function PrivacyPage() {
+export default function PrivacyPage(props: { params: Promise<any>; searchParams: Promise<any> }) {
+  // Await promises in Client Component to prevent Next.js 15 enumeration warnings
+  use(props.params);
+  use(props.searchParams);
+
   return (
     <div className="container mx-auto px-4 py-16 max-w-4xl">
       <motion.div
@@ -25,12 +30,12 @@ export default function PrivacyPage() {
           <div className="p-6 bg-secondary/5 rounded-2xl border border-secondary/10">
             <Lock className="text-secondary mb-4" size={32} />
             <h3 className="font-bold mb-2">Secure Processing</h3>
-            <p className="text-sm text-muted-foreground">We use advanced WebAssembly technology to perform heavy lifting inside your browser's sandbox.</p>
+            <p className="text-sm text-muted-foreground">We use advanced browser technology to perform processing inside your local sandbox.</p>
           </div>
           <div className="p-6 bg-accent/5 rounded-2xl border border-accent/10">
             <EyeOff className="text-accent mb-4" size={32} />
             <h3 className="font-bold mb-2">No Data Logging</h3>
-            <p className="text-sm text-muted-foreground">We do not track, store, or analyze your document content. Your files are deleted from memory as soon as you close the tab.</p>
+            <p className="text-sm text-muted-foreground">We do not track, store, or analyze your document content. Your files are deleted from memory instantly.</p>
           </div>
         </div>
 
@@ -41,11 +46,7 @@ export default function PrivacyPage() {
           </section>
           <section>
             <h2 className="text-2xl font-bold text-slate-900 mb-3">2. How We Process Files</h2>
-            <p>All document processing and digital manipulations—including but not limited to merging, splitting, and compression—are executed exclusively within the user's local computing environment. Our service architecture utilizes advanced client-side processing to ensure that no raw document data is transmitted to or stored on external server infrastructure, thereby providing a secure, local-only processing sandbox.</p>
-          </section>
-          <section>
-            <h2 className="text-2xl font-bold text-slate-900 mb-3">3. Cookies</h2>
-            <p>We use essential cookies to remember your preferences (like sidebar state). We do not use third-party tracking cookies for advertising.</p>
+            <p>All document processing and digital manipulations—including but not limited to merging, splitting, and compression—are executed exclusively within the user's local computing environment. Our service architecture ensures that no raw document data is transmitted to or stored on external server infrastructure.</p>
           </section>
         </div>
       </motion.div>
