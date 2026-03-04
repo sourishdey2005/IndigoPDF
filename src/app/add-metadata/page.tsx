@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Info, ArrowRight, Download, Loader2, Save } from "lucide-react";
+import { Info, Download, Loader2, Save, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,13 +11,48 @@ import { updateMetadata } from "@/lib/pdf-service";
 import { saveAs } from "file-saver";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
+import * as pdfjsLib from 'pdfjs-dist';
+
+if (typeof window !== "undefined") {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+}
 
 export default function AddMetadataPage() {
   const [files, setFiles] = useState<File[]>([]);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [meta, setMeta] = useState({ title: "", author: "", subject: "", keywords: "" });
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoadingThumbnail, setIsLoadingThumbnail] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const { toast } = useToast();
+
+  const loadThumbnail = useCallback(async (file: File) => {
+    setIsLoadingThumbnail(true);
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const page = await pdf.getPage(1);
+      const viewport = page.getViewport({ scale: 0.4 });
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      if (!context) return;
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      await page.render({ canvasContext: context, viewport }).promise;
+      setThumbnail(canvas.toDataURL('image/jpeg', 0.8));
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoadingThumbnail(false);
+    }
+  }, []);
+
+  const handleFilesAdded = (newFiles: File[]) => {
+    const file = newFiles[0];
+    setFiles([file]);
+    loadThumbnail(file);
+    setIsFinished(false);
+  };
 
   const handleProcess = async () => {
     if (files.length === 0) return;
@@ -47,11 +82,21 @@ export default function AddMetadataPage() {
       <div className="space-y-8">
         {!isFinished ? (
           <>
-            <PDFDropzone files={files} onFilesAdded={setFiles} onFileRemoved={() => setFiles([])} multiple={false} />
+            <PDFDropzone 
+              files={files} 
+              onFilesAdded={handleFilesAdded} 
+              onFileRemoved={() => { setFiles([]); setThumbnail(null); }} 
+              multiple={false} 
+            />
+            
             {files.length > 0 && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }} 
+                animate={{ opacity: 1, y: 0 }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-8"
+              >
                 <Card className="bg-white rounded-3xl border-none shadow-xl">
-                  <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <CardContent className="p-8 grid grid-cols-1 gap-6">
                     <div className="space-y-2">
                       <Label>Title</Label>
                       <Input value={meta.title} onChange={(e) => setMeta({...meta, title: e.target.value})} placeholder="e.g. Annual Report" />
@@ -65,13 +110,30 @@ export default function AddMetadataPage() {
                       <Input value={meta.subject} onChange={(e) => setMeta({...meta, subject: e.target.value})} placeholder="e.g. Finance" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Keywords (comma separated)</Label>
-                      <Input value={meta.keywords} onChange={(e) => setMeta({...meta, keywords: e.target.value})} placeholder="e.g. data, report, 2024" />
+                      <Label>Keywords</Label>
+                      <Input value={meta.keywords} onChange={(e) => setMeta({...meta, keywords: e.target.value})} placeholder="e.g. data, report" />
                     </div>
                   </CardContent>
                 </Card>
+
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-2 font-bold px-2">
+                    <FileText size={18} className="text-slate-400" />
+                    <span>Document Preview</span>
+                  </div>
+                  <div className="aspect-[3/4] bg-slate-100 rounded-3xl border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center relative">
+                    {isLoadingThumbnail ? (
+                      <Loader2 className="animate-spin text-primary" />
+                    ) : thumbnail ? (
+                      <img src={thumbnail} alt="PDF Preview" className="w-full h-full object-contain" />
+                    ) : (
+                      <span className="text-muted-foreground text-sm">Preview loading...</span>
+                    )}
+                  </div>
+                </div>
               </motion.div>
             )}
+            
             <div className="flex justify-center">
               <Button size="lg" disabled={files.length === 0 || isProcessing} onClick={handleProcess} className="rounded-full h-14 px-10">
                 {isProcessing ? <Loader2 className="animate-spin mr-2" /> : <Save className="mr-2" />}

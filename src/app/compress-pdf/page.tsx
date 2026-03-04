@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Zap, ArrowRight, Download, Loader2, Settings2 } from "lucide-react";
+import { Zap, ArrowRight, Download, Loader2, Settings2, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PDFDropzone } from "@/components/tools/PDFDropzone";
 import { compressPDF } from "@/lib/pdf-service";
@@ -10,21 +10,53 @@ import { saveAs } from "file-saver";
 import { useToast } from "@/hooks/use-toast";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import * as pdfjsLib from 'pdfjs-dist';
+
+if (typeof window !== "undefined") {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+}
 
 export default function CompressPDFPage() {
   const [files, setFiles] = useState<File[]>([]);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoadingThumbnail, setIsLoadingThumbnail] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [compressionLevel, setCompressionLevel] = useState([50]);
   const { toast } = useToast();
 
+  const loadThumbnail = useCallback(async (file: File) => {
+    setIsLoadingThumbnail(true);
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const page = await pdf.getPage(1);
+      const viewport = page.getViewport({ scale: 0.4 });
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      if (!context) return;
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      await page.render({ canvasContext: context, viewport }).promise;
+      setThumbnail(canvas.toDataURL('image/jpeg', 0.8));
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoadingThumbnail(false);
+    }
+  }, []);
+
   const handleFilesAdded = (newFiles: File[]) => {
-    setFiles([newFiles[0]]);
+    const file = newFiles[0];
+    setFiles([file]);
+    loadThumbnail(file);
     setIsFinished(false);
   };
 
   const removeFile = () => {
     setFiles([]);
+    setThumbnail(null);
   };
 
   const handleProcess = async () => {
@@ -88,29 +120,47 @@ export default function CompressPDFPage() {
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white border rounded-2xl p-8 shadow-sm"
+                className="grid grid-cols-1 md:grid-cols-2 gap-8"
               >
-                <div className="max-w-md mx-auto space-y-6">
-                  <div className="flex items-center gap-2 text-primary font-bold mb-2">
-                    <Settings2 size={18} />
-                    <span>Compression Settings</span>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-end">
-                      <Label className="text-sm font-medium">Compression Level</Label>
-                      <span className="text-primary font-bold text-lg">{compressionLevel[0]}%</span>
+                <Card className="bg-white border-none shadow-xl rounded-3xl">
+                  <CardContent className="p-8 space-y-6">
+                    <div className="flex items-center gap-2 text-primary font-bold mb-2">
+                      <Settings2 size={18} />
+                      <span>Compression Settings</span>
                     </div>
-                    <Slider
-                      value={compressionLevel}
-                      onValueChange={setCompressionLevel}
-                      max={100}
-                      step={1}
-                      className="py-4"
-                    />
-                    <p className="text-xs text-muted-foreground italic text-center">
-                      {getCompressionLabel(compressionLevel[0])}
-                    </p>
+                    
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-end">
+                        <Label className="text-sm font-medium">Compression Level</Label>
+                        <span className="text-primary font-bold text-lg">{compressionLevel[0]}%</span>
+                      </div>
+                      <Slider
+                        value={compressionLevel}
+                        onValueChange={setCompressionLevel}
+                        max={100}
+                        step={1}
+                        className="py-4"
+                      />
+                      <p className="text-xs text-muted-foreground italic text-center">
+                        {getCompressionLabel(compressionLevel[0])}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-2 font-bold px-2">
+                    <FileText size={18} className="text-slate-400" />
+                    <span>Document Preview</span>
+                  </div>
+                  <div className="aspect-[3/4] bg-slate-100 rounded-3xl border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center relative">
+                    {isLoadingThumbnail ? (
+                      <Loader2 className="animate-spin text-primary" />
+                    ) : thumbnail ? (
+                      <img src={thumbnail} alt="PDF Preview" className="w-full h-full object-contain" />
+                    ) : (
+                      <span className="text-muted-foreground text-sm">Preview loading...</span>
+                    )}
                   </div>
                 </div>
               </motion.div>

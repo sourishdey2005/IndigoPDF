@@ -1,9 +1,8 @@
-
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { PenTool, ArrowRight, Download, Loader2, Type, Move, Layers } from "lucide-react";
+import { PenTool, ArrowRight, Download, Loader2, Type, Move, Layers, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PDFDropzone } from "@/components/tools/PDFDropzone";
 import { editPDF } from "@/lib/pdf-service";
@@ -13,10 +12,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import * as pdfjsLib from 'pdfjs-dist';
+
+if (typeof window !== "undefined") {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+}
 
 export default function EditPDFPage() {
   const [files, setFiles] = useState<File[]>([]);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoadingThumbnail, setIsLoadingThumbnail] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   
   const [text, setText] = useState("IndigoPDF Annotation");
@@ -29,8 +35,31 @@ export default function EditPDFPage() {
 
   const { toast } = useToast();
 
+  const loadThumbnail = useCallback(async (file: File) => {
+    setIsLoadingThumbnail(true);
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const page = await pdf.getPage(1);
+      const viewport = page.getViewport({ scale: 0.4 });
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      if (!context) return;
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      await page.render({ canvasContext: context, viewport }).promise;
+      setThumbnail(canvas.toDataURL('image/jpeg', 0.8));
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoadingThumbnail(false);
+    }
+  }, []);
+
   const handleFilesAdded = (newFiles: File[]) => {
-    setFiles([newFiles[0]]);
+    const file = newFiles[0];
+    setFiles([file]);
+    loadThumbnail(file);
     setIsFinished(false);
   };
 
@@ -39,7 +68,6 @@ export default function EditPDFPage() {
 
     setIsProcessing(true);
     try {
-      // Hex to RGB
       const r = parseInt(color.slice(1, 3), 16);
       const g = parseInt(color.slice(3, 5), 16);
       const b = parseInt(color.slice(5, 7), 16);
@@ -54,7 +82,6 @@ export default function EditPDFPage() {
       };
 
       const editedBytes = await editPDF(files[0], options);
-      
       const blob = new Blob([editedBytes], { type: "application/pdf" });
       saveAs(blob, `edited-${files[0].name}`);
       setIsFinished(true);
@@ -75,7 +102,7 @@ export default function EditPDFPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
+    <div className="container mx-auto px-4 py-12 max-w-6xl">
       <div className="text-center mb-12">
         <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mx-auto mb-6">
           <PenTool size={32} />
@@ -90,13 +117,13 @@ export default function EditPDFPage() {
             <PDFDropzone 
               files={files} 
               onFilesAdded={handleFilesAdded} 
-              onFileRemoved={() => setFiles([])} 
+              onFileRemoved={() => { setFiles([]); setThumbnail(null); }} 
               multiple={false} 
             />
 
             {files.length > 0 && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                <Card className="bg-white border-none shadow-xl rounded-3xl overflow-hidden">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <Card className="lg:col-span-2 bg-white border-none shadow-xl rounded-3xl overflow-hidden">
                   <CardContent className="p-8 space-y-8">
                     <div className="space-y-6">
                       <div className="flex items-center gap-2 text-primary font-bold">
@@ -164,28 +191,44 @@ export default function EditPDFPage() {
                   </CardContent>
                 </Card>
 
-                <div className="flex justify-center">
-                  <Button
-                    size="lg"
-                    disabled={isProcessing}
-                    onClick={handleProcess}
-                    className="rounded-full h-14 px-12 text-lg font-bold shadow-xl shadow-primary/20 transition-all hover:scale-105"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Processing...
-                      </>
+                <div className="flex flex-col gap-4">
+                   <div className="flex items-center gap-2 font-bold px-2">
+                    <FileText size={18} className="text-slate-400" />
+                    <span>Page Preview</span>
+                  </div>
+                  <div className="aspect-[3/4] bg-slate-100 rounded-3xl border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center relative">
+                    {isLoadingThumbnail ? (
+                      <Loader2 className="animate-spin text-primary" />
+                    ) : thumbnail ? (
+                      <img src={thumbnail} alt="PDF Preview" className="w-full h-full object-contain" />
                     ) : (
-                      <>
-                        Apply Edits & Download
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </>
+                      <span className="text-muted-foreground text-sm">No preview available</span>
                     )}
-                  </Button>
+                  </div>
                 </div>
               </motion.div>
             )}
+
+            <div className="flex justify-center pt-6">
+              <Button
+                size="lg"
+                disabled={files.length === 0 || isProcessing}
+                onClick={handleProcess}
+                className="rounded-full h-14 px-12 text-lg font-bold shadow-xl shadow-primary/20 transition-all hover:scale-105"
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    Apply Edits & Download
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </>
+                )}
+              </Button>
+            </div>
           </>
         ) : (
           <motion.div
