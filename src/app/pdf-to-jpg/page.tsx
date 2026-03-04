@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ImageIcon, Download, Loader2, ArrowRight } from "lucide-react";
+import { ImageIcon, Download, Loader2, ArrowRight, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PDFDropzone } from "@/components/tools/PDFDropzone";
 import { pdfToJpg } from "@/lib/pdf-service";
@@ -27,9 +27,17 @@ export default function PDFToJPGPage() {
     try {
       const result = await pdfToJpg(files[0]);
       setImages(result);
-      toast({ title: "Conversion Complete", description: "PDF pages converted to images." });
+      toast({ 
+        title: "Conversion Complete", 
+        description: `Successfully converted ${result.length} PDF pages to images.` 
+      });
     } catch (error) {
-      toast({ title: "Error", description: "Conversion failed.", variant: "destructive" });
+      console.error("PDF to JPG Error:", error);
+      toast({ 
+        title: "Conversion Failed", 
+        description: "An error occurred while processing the PDF. Please ensure the file is valid.", 
+        variant: "destructive" 
+      });
     } finally {
       setIsProcessing(false);
     }
@@ -50,28 +58,82 @@ export default function PDFToJPGPage() {
           <>
             <PDFDropzone files={files} onFilesAdded={handleFilesAdded} onFileRemoved={() => setFiles([])} multiple={false} />
             <div className="flex justify-center">
-              <Button size="lg" disabled={files.length === 0 || isProcessing} onClick={handleProcess} className="rounded-full h-14 px-10">
-                {isProcessing ? <Loader2 className="animate-spin mr-2" /> : null}
-                Convert to JPG
+              <Button 
+                size="lg" 
+                disabled={files.length === 0 || isProcessing} 
+                onClick={handleProcess} 
+                className="rounded-full h-14 px-10 shadow-xl shadow-primary/20"
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="animate-spin mr-2 h-5 w-5" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    Convert to JPG
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </>
+                )}
               </Button>
             </div>
           </>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {images.map((img, i) => (
-              <Card key={i} className="overflow-hidden group relative">
-                <CardContent className="p-0 aspect-[3/4]">
-                  <img src={img} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                    <Button size="sm" onClick={() => saveAs(img, `page-${i+1}.jpg`)}>
-                      <Download size={14} className="mr-2" /> Download
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="space-y-8">
+            <div className="flex items-center justify-between bg-white p-4 rounded-2xl border">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
+                  <ImageIcon size={20} />
+                </div>
+                <div>
+                  <h3 className="font-bold">Generated Images</h3>
+                  <p className="text-xs text-muted-foreground">{images.length} pages converted</p>
+                </div>
+              </div>
+              <Button variant="outline" onClick={() => setImages(null)} className="rounded-full">
+                <RefreshCw size={14} className="mr-2" />
+                New Conversion
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+              {images.map((img, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <Card className="overflow-hidden group relative bg-white border-none shadow-md">
+                    <CardContent className="p-0 aspect-[3/4] relative">
+                      <img src={img} className="w-full h-full object-cover" alt={`Page ${i+1}`} />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity gap-2">
+                        <span className="text-white text-xs font-bold mb-2">Page {i + 1}</span>
+                        <Button size="sm" className="rounded-full" onClick={() => saveAs(img, `page-${i+1}.jpg`)}>
+                          <Download size={14} className="mr-2" /> Download
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
           </div>
         )}
+      </div>
+
+      <div className="mt-20 pt-10 border-t">
+        <h3 className="text-2xl font-bold mb-6">High Quality PDF Rendering</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="p-6 bg-slate-50 rounded-3xl">
+            <h4 className="font-bold mb-2">100% Privacy</h4>
+            <p className="text-sm text-muted-foreground">The conversion happens locally in your browser. No files are ever uploaded or stored on our servers.</p>
+          </div>
+          <div className="p-6 bg-slate-50 rounded-3xl">
+            <h4 className="font-bold mb-2">Crystal Clear</h4>
+            <p className="text-sm text-muted-foreground">We use a 2x supersampling scale during rendering to ensure your JPGs are sharp and readable.</p>
+          </div>
+        </div>
       </div>
     </div>
   );
