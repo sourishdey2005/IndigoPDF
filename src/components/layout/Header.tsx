@@ -56,7 +56,7 @@ export function Header() {
     <header className="glass-header">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 sm:gap-4 group">
-          <div className="relative w-10 h-10 sm:w-14 sm:h-14 bg-white rounded-xl flex items-center justify-center overflow-hidden border transition-transform group-hover:rotate-6">
+          <div className="relative w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-xl flex items-center justify-center overflow-hidden border transition-transform group-hover:rotate-6">
             <Image 
               src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png" 
               alt="IndigoPDF Logo" 

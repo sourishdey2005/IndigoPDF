@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import Image from "next/image";
 import { Github, Linkedin, Globe, ExternalLink, Smartphone } from "lucide-react";
@@ -9,7 +10,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           <div className="col-span-1 lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-6">
-              <div className="relative w-12 h-12 bg-white rounded-lg flex items-center justify-center overflow-hidden border">
+              <div className="relative w-14 h-14 bg-white rounded-lg flex items-center justify-center overflow-hidden border">
                 <Image 
                   src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png" 
                   alt="IndigoPDF Logo" 

@@ -162,7 +162,6 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="text-center lg:text-left"
             >
-              {/* Added Logo at the Top */}
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -248,9 +247,14 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
                   <motion.div 
                     animate={{ scale: [1, 1.05, 1] }}
                     transition={{ duration: 3, repeat: Infinity }}
-                    className="w-32 h-32 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center mb-8 border border-white/30"
+                    className="w-32 h-32 bg-white rounded-full flex items-center justify-center mb-8 border-4 border-white/30 shadow-2xl relative overflow-hidden"
                   >
-                    <FileText size={64} className="text-white" />
+                    <Image 
+                      src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png"
+                      alt="IndigoPDF Logo"
+                      fill
+                      className="object-contain p-4"
+                    />
                   </motion.div>
                   <div className="text-center">
                     <h3 className="text-white font-bold text-2xl mb-2">Secure Local Engine</h3>
