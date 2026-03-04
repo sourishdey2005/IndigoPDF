@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -32,7 +33,11 @@ import {
   HelpCircle,
   FileQuestion,
   Info,
-  XCircle
+  XCircle,
+  Hash,
+  Palette,
+  Edit3,
+  Code
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ToolCard } from "@/components/tools/ToolCard";
@@ -50,40 +55,44 @@ const tools = [
   { id: 'split', title: "Split PDF", description: "Separate one page or a whole set into independent files.", icon: Scissors, href: "/split-pdf", category: "Organize" },
   { id: 'organize', title: "Organize PDF", description: "Sort, delete, and reorder pages however you like.", icon: Grid3X3, href: "/organize-pdf", category: "Organize" },
   { id: 'delete-pages', title: "Delete Pages", description: "Remove unwanted pages from your PDF file.", icon: XCircle, href: "/delete-pages", category: "Organize" },
+  { id: 'batch-rename', title: "Batch Rename", description: "Rename multiple PDF files using a pattern.", icon: Edit3, href: "/batch-rename", category: "Organize" },
   
   // Optimize
   { id: 'compress', title: "Compress PDF", description: "Reduce file size while optimizing for quality.", icon: Zap, href: "/compress-pdf", category: "Optimize" },
   { id: 'repair', title: "Repair PDF", description: "Repair a damaged PDF and recover data.", icon: Wrench, href: "/repair-pdf", category: "Optimize" },
   { id: 'flatten', title: "Flatten PDF", description: "Merge form fields and layers into page content.", icon: Layers, href: "/flatten-pdf", category: "Optimize" },
+  { id: 'grayscale', title: "PDF Grayscale", description: "Convert color PDFs to monochrome.", icon: Palette, href: "/pdf-grayscale", category: "Optimize" },
   
   // Convert From PDF
-  { id: 'pdf-to-word', title: "PDF to Word", description: "Convert PDFs into editable DOC and DOCX documents.", icon: FileText, href: "/pdf-to-word", category: "Convert" },
-  { id: 'pdf-to-excel', title: "PDF to Excel", description: "Pull data from PDFs into Excel spreadsheets.", icon: FileSpreadsheet, href: "/pdf-to-excel", category: "Convert" },
-  { id: 'pdf-to-ppt', title: "PDF to PowerPoint", description: "Turn PDF files into PPT and PPTX slideshows.", icon: Presentation, href: "/pdf-to-ppt", category: "Convert" },
+  { id: 'pdf-to-word', title: "PDF to Word", description: "Convert PDFs into editable documents.", icon: FileText, href: "/pdf-to-word", category: "Convert" },
+  { id: 'pdf-to-excel', title: "PDF to Excel", description: "Pull data from PDFs into spreadsheets.", icon: FileSpreadsheet, href: "/pdf-to-excel", category: "Convert" },
+  { id: 'pdf-to-ppt', title: "PDF to PowerPoint", description: "Turn PDF files into slideshows.", icon: Presentation, href: "/pdf-to-ppt", category: "Convert" },
   { id: 'pdf-to-jpg', title: "PDF to JPG", description: "Convert each PDF page into a high-quality JPG.", icon: ImageIcon, href: "/pdf-to-jpg", category: "Convert" },
   { id: 'pdf-to-text', title: "PDF to Text", description: "Extract raw text data from digital PDF files.", icon: FileText, href: "/pdf-to-text", category: "Convert" },
+  { id: 'pdf-to-html', title: "PDF to HTML", description: "Convert PDF to responsive HTML code.", icon: Code, href: "/pdf-to-html", category: "Convert" },
   
   // Convert To PDF
   { id: 'word-to-pdf', title: "Word to PDF", description: "Convert DOC and DOCX files to PDF.", icon: FileText, href: "/word-to-pdf", category: "Convert" },
-  { id: 'excel-to-pdf', title: "Excel to PDF", description: "Make Excel spreadsheets easy to read as PDF.", icon: FileSpreadsheet, href: "/excel-to-pdf", category: "Convert" },
-  { id: 'ppt-to-pdf', title: "PowerPoint to PDF", description: "Convert PPT and PPTX slideshows to PDF.", icon: Presentation, href: "/ppt-to-pdf", category: "Convert" },
+  { id: 'excel-to-pdf', title: "Excel to PDF", description: "Convert Excel spreadsheets to PDF.", icon: FileSpreadsheet, href: "/excel-to-pdf", category: "Convert" },
+  { id: 'ppt-to-pdf', title: "PowerPoint to PDF", description: "Convert PowerPoint slideshows to PDF.", icon: Presentation, href: "/ppt-to-pdf", category: "Convert" },
   { id: 'jpg-to-pdf', title: "JPG to PDF", description: "Convert JPG images to PDF in seconds.", icon: ImageIcon, href: "/jpg-to-pdf", category: "Convert" },
   { id: 'html-to-pdf', title: "HTML to PDF", description: "Convert webpages to PDF using URLs.", icon: Globe, href: "/html-to-pdf", category: "Convert" },
   
   // Edit
-  { id: 'edit-pdf', title: "Edit PDF", description: "Add text, images, shapes or freehand annotations.", icon: PenTool, href: "/edit-pdf", category: "Edit" },
+  { id: 'edit-pdf', title: "Edit PDF", description: "Add text, images, or freehand annotations.", icon: PenTool, href: "/edit-pdf", category: "Edit" },
   { id: 'ocr', title: "OCR PDF", description: "Convert scanned PDFs into searchable documents.", icon: FileSearch, href: "/ocr-pdf", category: "Edit" },
   { id: 'rotate', title: "Rotate PDF", description: "Rotate your PDFs precisely how you need.", icon: RotateCw, href: "/rotate-pdf", category: "Edit" },
   { id: 'watermark', title: "Watermark", description: "Stamp image or text over your PDF.", icon: ShieldCheck, href: "/watermark-pdf", category: "Edit" },
   { id: 'page-nums', title: "Page Numbers", description: "Add page numbers with custom positions.", icon: Type, href: "/page-numbers", category: "Edit" },
+  { id: 'bates', title: "Bates Numbering", description: "Add sequential Bates numbers to legal docs.", icon: Hash, href: "/bates-numbering", category: "Edit" },
   { id: 'crop', title: "Crop PDF", description: "Crop margins or specific areas of your PDF.", icon: Crop, href: "/crop-pdf", category: "Edit" },
-  { id: 'metadata', title: "Metadata Editor", description: "Edit Title, Author, and Keywords of your PDF.", icon: Info, href: "/add-metadata", category: "Edit" },
+  { id: 'metadata', title: "Metadata Editor", description: "Edit internal properties of your PDF.", icon: Info, href: "/add-metadata", category: "Edit" },
   
   // Security
   { id: 'protect', title: "Protect PDF", description: "Encrypt PDF files with a password.", icon: Lock, href: "/protect-pdf", category: "Security" },
-  { id: 'unlock', title: "Unlock PDF", description: "Remove PDF password security and restrictions.", icon: Unlock, href: "/unlock-pdf", category: "Security" },
+  { id: 'unlock', title: "Unlock PDF", description: "Remove PDF password restrictions.", icon: Unlock, href: "/unlock-pdf", category: "Security" },
   { id: 'redact', title: "Redact PDF", description: "Permanently remove sensitive information.", icon: EyeOff, href: "/redact-pdf", category: "Security" },
-  { id: 'sign', title: "Sign PDF", description: "Sign yourself or request electronic signatures.", icon: PenTool, href: "/sign-pdf", category: "Security" },
+  { id: 'sign', title: "Sign PDF", description: "Sign yourself or request signatures.", icon: PenTool, href: "/sign-pdf", category: "Security" },
 
   // Specialized
   { id: 'translate', title: "Translate PDF", description: "AI-powered PDF translation (Layout preserved).", icon: Languages, href: "/translate-pdf", category: "Specialized" },
@@ -122,7 +131,7 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full">
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden bg-slate-50">
+      <section className="relative py-20 lg:py-32 overflow-hidden bg-slate-50 dark:bg-slate-900/50">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full opacity-30 pointer-events-none">
           <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
           <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
@@ -142,7 +151,7 @@ export default function Home() {
               The Complete <br />
               <span className="text-primary">PDF Solution</span>
             </h1>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
               Every tool you need to use PDFs, at your fingertips. All are 100% free and easy to use! Merge, split, compress, convert, rotate, unlock and watermark PDFs with just a few clicks.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -152,7 +161,7 @@ export default function Home() {
                 </Button>
               </a>
               <a href="#how-it-works">
-                <Button size="lg" variant="outline" className="rounded-full h-14 px-8 text-lg bg-white">
+                <Button size="lg" variant="outline" className="rounded-full h-14 px-8 text-lg bg-white dark:bg-slate-800">
                   How it Works
                 </Button>
               </a>
@@ -170,7 +179,7 @@ export default function Home() {
           </div>
           
           <Tabs defaultValue="All" onValueChange={setActiveTab} className="w-full md:w-auto">
-            <TabsList className="bg-white p-1 h-12 rounded-xl border shadow-sm flex overflow-x-auto no-scrollbar">
+            <TabsList className="bg-white dark:bg-slate-800 p-1 h-12 rounded-xl border shadow-sm flex overflow-x-auto no-scrollbar">
               {["All", "Organize", "Optimize", "Convert", "Edit", "Security", "Specialized"].map((tab) => (
                 <TabsTrigger 
                   key={tab} 
@@ -192,7 +201,7 @@ export default function Home() {
       </section>
 
       {/* How it Works Section */}
-      <section id="how-it-works" className="py-24 bg-white border-y">
+      <section id="how-it-works" className="py-24 bg-white dark:bg-slate-900/20 border-y">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">How it Works</h2>
@@ -201,17 +210,17 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
-              { step: "01", title: "Select Tool", desc: "Choose from over 30+ PDF tools designed for every document need.", icon: Grid3X3 },
+              { step: "01", title: "Select Tool", desc: "Choose from over 35+ PDF tools designed for every document need.", icon: Grid3X3 },
               { step: "02", title: "Upload & Process", desc: "Drag and drop your files. Processing happens instantly in your browser.", icon: Zap },
               { step: "03", title: "Download Result", desc: "Get your optimized document immediately. Fast, secure, and free.", icon: ArrowRight }
             ].map((item, idx) => (
-              <div key={idx} className="relative group p-8 rounded-3xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-xl transition-all">
+              <div key={idx} className="relative group p-8 rounded-3xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 hover:bg-white dark:hover:bg-slate-800 hover:shadow-xl transition-all">
                 <div className="text-6xl font-black text-primary/5 absolute top-4 right-8">{item.step}</div>
                 <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6">
                   <item.icon size={28} />
                 </div>
                 <h3 className="text-2xl font-bold mb-4">{item.title}</h3>
-                <p className="text-slate-600 leading-relaxed">{item.desc}</p>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -249,7 +258,7 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-24 bg-slate-50">
+      <section id="faq" className="py-24 bg-slate-50 dark:bg-slate-950">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4 flex items-center justify-center gap-3">
@@ -261,9 +270,9 @@ export default function Home() {
           
           <Accordion type="single" collapsible className="w-full space-y-4">
             {faqs.map((faq, idx) => (
-              <AccordionItem key={idx} value={`item-${idx}`} className="bg-white px-6 rounded-2xl border border-slate-200">
+              <AccordionItem key={idx} value={`item-${idx}`} className="bg-white dark:bg-slate-900 px-6 rounded-2xl border border-slate-200 dark:border-slate-800">
                 <AccordionTrigger className="text-lg font-bold hover:no-underline">{faq.question}</AccordionTrigger>
-                <AccordionContent className="text-slate-600 text-base pb-6 leading-relaxed">
+                <AccordionContent className="text-slate-600 dark:text-slate-400 text-base pb-6 leading-relaxed">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>

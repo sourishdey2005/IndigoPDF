@@ -4,8 +4,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, ChevronDown, Combine, Scissors, Zap, Lock, FileSearch, Languages, Camera, FileText } from "lucide-react";
+import { Menu, ChevronDown, Combine, Scissors, Zap, Lock, FileSearch, Languages, Camera, FileText, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +18,7 @@ import {
 
 export function Header() {
   const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
@@ -70,7 +72,18 @@ export function Header() {
           <Link href="/#faq" className="text-sm font-medium hover:text-primary transition-colors">FAQ</Link>
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          {mounted && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="rounded-full"
+            >
+              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+            </Button>
+          )}
+          
           {mounted ? (
             <Button size="sm" className="rounded-full shadow-lg shadow-primary/20">
               Get Started
