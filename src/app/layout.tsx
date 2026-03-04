@@ -7,8 +7,9 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'IndigoPDF | Free, Private & Powerful PDF Tools',
-  description: 'Manage, convert, edit, and secure your PDF files completely free and private in your browser.',
+  title: 'IndigoPDF | Free, Private & Secure Online PDF Tools',
+  description: 'The ultimate privacy-first PDF suite. Effortlessly merge, split, compress, edit, and convert PDFs 100% locally in your browser. No uploads, no limits, all free.',
+  keywords: 'PDF tools, merge PDF, split PDF, compress PDF, PDF to Word, PDF OCR, free PDF editor, secure PDF, private PDF converter',
   icons: {
     icon: 'https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png',
   },
