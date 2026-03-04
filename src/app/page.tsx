@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -15,7 +14,8 @@ import {
   Lock, 
   Unlock, 
   Grid3X3,
-  FileText
+  FileText,
+  LayoutGrid
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ToolCard } from "@/components/tools/ToolCard";
@@ -24,15 +24,17 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const tools = [
   { id: 'merge', title: "Merge PDF", description: "Combine multiple PDFs into one document.", icon: Combine, href: "/merge-pdf", category: "Organize" },
   { id: 'split', title: "Split PDF", description: "Extract pages or split into multiple files.", icon: Scissors, href: "/split-pdf", category: "Organize" },
-  { id: 'compress', title: "Compress PDF", description: "Reduce file size without losing quality.", icon: Zap, href: "/compress-pdf", category: "Optimize" },
+  { id: 'compress', title: "Compress PDF", description: "Reduce file size with custom quality levels.", icon: Zap, href: "/compress-pdf", category: "Optimize" },
   { id: 'jpg-to-pdf', title: "JPG to PDF", description: "Convert images to high-quality PDFs.", icon: ImageIcon, href: "/jpg-to-pdf", category: "Convert" },
-  { id: 'ocr', title: "OCR PDF", description: "Make scanned PDFs searchable and editable.", icon: FileSearch, href: "/ocr-pdf", category: "Edit" },
+  { id: 'ocr', title: "OCR PDF", description: "Make scanned PDFs searchable using AI.", icon: FileSearch, href: "/ocr-pdf", category: "Edit" },
   { id: 'protect', title: "Protect PDF", description: "Encrypt and password-protect your files.", icon: Lock, href: "/protect-pdf", category: "Security" },
   { id: 'organize', title: "Organize PDF", description: "Rotate, delete, and reorder PDF pages.", icon: Grid3X3, href: "/organize-pdf", category: "Organize" },
-  { id: 'unlock', title: "Unlock PDF", description: "Remove password and restrictions from PDF.", icon: Unlock, href: "/unlock-pdf", category: "Security" },
+  { id: 'unlock', title: "Unlock PDF", description: "Remove password and restrictions.", icon: Unlock, href: "/unlock-pdf", category: "Security" },
   { id: 'rotate', title: "Rotate PDF", description: "Rotate one or all pages in your PDF.", icon: RotateCw, href: "/rotate-pdf", category: "Edit" },
   { id: 'watermark', title: "Watermark", description: "Add image or text watermark to your PDF.", icon: ShieldCheck, href: "/watermark-pdf", category: "Edit" },
   { id: 'page-nums', title: "Page Numbers", description: "Add page numbers to your document.", icon: Type, href: "/page-numbers", category: "Edit" },
+  { id: 'extract-images', title: "Extract Images", description: "Extract all images embedded in a PDF.", icon: LayoutGrid, href: "/extract-images", category: "Convert" },
+  { id: 'pdf-to-text', title: "PDF to Text", description: "Instantly extract text from digital PDFs.", icon: FileText, href: "/pdf-to-text", category: "Convert" },
 ];
 
 export default function Home() {
@@ -69,9 +71,11 @@ export default function Home() {
               Your files never leave your device. Process PDFs in seconds with our privacy-first toolkit. No signups, no limits, no cost.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="rounded-full h-14 px-8 text-lg font-semibold shadow-xl shadow-primary/20">
-                Explore All Tools
-              </Button>
+              <a href="#tools">
+                <Button size="lg" className="rounded-full h-14 px-8 text-lg font-semibold shadow-xl shadow-primary/20">
+                  Explore All Tools
+                </Button>
+              </a>
               <Button size="lg" variant="outline" className="rounded-full h-14 px-8 text-lg bg-white">
                 How it Works
               </Button>

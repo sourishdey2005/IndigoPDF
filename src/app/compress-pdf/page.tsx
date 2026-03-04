@@ -1,19 +1,21 @@
-
 "use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Zap, ArrowRight, Download, Loader2 } from "lucide-react";
+import { Zap, ArrowRight, Download, Loader2, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PDFDropzone } from "@/components/tools/PDFDropzone";
 import { compressPDF } from "@/lib/pdf-service";
 import { saveAs } from "file-saver";
 import { useToast } from "@/hooks/use-toast";
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
 
 export default function CompressPDFPage() {
   const [files, setFiles] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const [compressionLevel, setCompressionLevel] = useState([50]);
   const { toast } = useToast();
 
   const handleFilesAdded = (newFiles: File[]) => {
@@ -30,13 +32,13 @@ export default function CompressPDFPage() {
 
     setIsProcessing(true);
     try {
-      const compressedBytes = await compressPDF(files[0]);
+      const compressedBytes = await compressPDF(files[0], compressionLevel[0]);
       const blob = new Blob([compressedBytes], { type: "application/pdf" });
       saveAs(blob, `compressed-${files[0].name}`);
       setIsFinished(true);
       toast({
         title: "Compression complete",
-        description: "Your PDF has been optimized and downloaded.",
+        description: `Your PDF has been optimized with ${compressionLevel[0]}% compression setting.`,
       });
     } catch (error) {
       console.error(error);
@@ -48,6 +50,12 @@ export default function CompressPDFPage() {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const getCompressionLabel = (val: number) => {
+    if (val < 30) return "Basic (High Quality)";
+    if (val < 70) return "Balanced (Recommended)";
+    return "Extreme (Smallest File)";
   };
 
   return (
@@ -75,6 +83,38 @@ export default function CompressPDFPage() {
               onFileRemoved={removeFile} 
               multiple={false}
             />
+
+            {files.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white border rounded-2xl p-8 shadow-sm"
+              >
+                <div className="max-w-md mx-auto space-y-6">
+                  <div className="flex items-center gap-2 text-primary font-bold mb-2">
+                    <Settings2 size={18} />
+                    <span>Compression Settings</span>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-end">
+                      <Label className="text-sm font-medium">Compression Level</Label>
+                      <span className="text-primary font-bold text-lg">{compressionLevel[0]}%</span>
+                    </div>
+                    <Slider
+                      value={compressionLevel}
+                      onValueChange={setCompressionLevel}
+                      max={100}
+                      step={1}
+                      className="py-4"
+                    />
+                    <p className="text-xs text-muted-foreground italic text-center">
+                      {getCompressionLabel(compressionLevel[0])}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
             
             <div className="flex justify-center pt-6">
               <Button
