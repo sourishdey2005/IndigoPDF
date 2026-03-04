@@ -165,7 +165,7 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-2xl shadow-xl flex items-center justify-center overflow-hidden border mx-auto lg:mx-0 mb-8"
+                className="relative w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-3xl shadow-xl flex items-center justify-center overflow-hidden border mx-auto lg:mx-0 mb-8"
               >
                 <Image 
                   src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png" 
@@ -226,41 +226,23 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
               transition={{ duration: 1, delay: 0.2, type: "spring" }}
               className="relative hidden lg:block"
             >
-              <div className="relative aspect-square w-full max-w-lg mx-auto">
+              <div className="relative w-full max-w-lg aspect-square mx-auto">
                 <motion.div 
-                  animate={{ y: [0, -20, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-0 right-0 w-32 h-32 bg-white rounded-3xl shadow-2xl flex items-center justify-center z-20 border border-slate-100"
+                  animate={{ 
+                    y: [0, -20, 0],
+                    rotate: [0, 2, 0, -2, 0]
+                  }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  className="relative w-full h-full"
                 >
-                  <Combine size={48} className="text-primary" />
+                  <Image 
+                    src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png"
+                    alt="IndigoPDF Hero Logo"
+                    fill
+                    className="object-contain drop-shadow-[0_20px_50px_rgba(79,70,229,0.3)]"
+                    priority
+                  />
                 </motion.div>
-                <motion.div 
-                  animate={{ y: [0, 20, 0] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute bottom-10 left-[-20px] w-28 h-28 bg-white rounded-3xl shadow-2xl flex items-center justify-center z-20 border border-slate-100"
-                >
-                  <Zap size={40} className="text-amber-500 fill-amber-100" />
-                </motion.div>
-                
-                <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-[40px] shadow-[0_40px_100px_rgba(79,70,229,0.2)] flex flex-col items-center justify-center p-12 overflow-hidden">
-                  <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
-                  <motion.div 
-                    animate={{ scale: [1, 1.05, 1] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                    className="w-32 h-32 bg-white rounded-full flex items-center justify-center mb-8 border-4 border-white/30 shadow-2xl relative overflow-hidden"
-                  >
-                    <Image 
-                      src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png"
-                      alt="IndigoPDF Logo"
-                      fill
-                      className="object-contain p-4"
-                    />
-                  </motion.div>
-                  <div className="text-center">
-                    <h3 className="text-white font-bold text-2xl mb-2">Secure Local Engine</h3>
-                    <p className="text-white/70 text-sm font-medium">Your browser is the server.</p>
-                  </div>
-                </div>
               </div>
             </motion.div>
           </div>

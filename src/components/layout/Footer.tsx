@@ -9,16 +9,16 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           <div className="col-span-1 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-3 mb-6">
-              <div className="relative w-14 h-14 bg-white rounded-lg flex items-center justify-center overflow-hidden border">
+            <Link href="/" className="flex items-center gap-4 mb-6">
+              <div className="relative w-16 h-16 bg-white rounded-xl flex items-center justify-center overflow-hidden border shadow-sm">
                 <Image 
                   src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png" 
                   alt="IndigoPDF Logo" 
                   fill
-                  className="object-contain p-0.5"
+                  className="object-contain p-1"
                 />
               </div>
-              <span className="text-xl font-bold tracking-tight">
+              <span className="text-2xl font-bold tracking-tight">
                 Indigo<span className="text-primary">PDF</span>
               </span>
             </Link>
@@ -99,7 +99,7 @@ export function Footer() {
               rel="noopener noreferrer" 
               className="block transition-transform hover:scale-105 active:scale-95"
             >
-              <div className="relative w-[240px] h-[72px] overflow-hidden rounded-xl shadow-lg border bg-white flex items-center justify-center">
+              <div className="relative w-[280px] h-[84px] overflow-hidden rounded-2xl shadow-xl border bg-white flex items-center justify-center">
                 <Image 
                   src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772635160/IndigoPDF_kw0cqb.png" 
                   alt="Download IndigoPDF APK" 
@@ -108,7 +108,7 @@ export function Footer() {
                 />
               </div>
             </Link>
-            <p className="text-xs text-muted-foreground leading-tight max-w-[240px]">
+            <p className="text-xs text-muted-foreground leading-tight max-w-[280px]">
               Take IndigoPDF on the go. Download the official APK for your Android device and process documents anywhere.
             </p>
           </div>
