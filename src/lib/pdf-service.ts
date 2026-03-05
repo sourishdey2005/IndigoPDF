@@ -432,20 +432,38 @@ export async function pdfToJpg(file: File): Promise<string[]> {
   return await extractImagesFromPDF(file);
 }
 
-export async function signPDF(file: File, signatureDataUri: string): Promise<Uint8Array> {
+export interface SignOptions {
+  type: 'all' | 'specific' | 'last';
+  pageIndex?: number; // 0-indexed
+}
+
+export async function signPDF(file: File, signatureDataUri: string, options: SignOptions): Promise<Uint8Array> {
   const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
   const signatureImage = await pdfDoc.embedPng(signatureDataUri);
   const pages = pdfDoc.getPages();
-  const lastPage = pages[pages.length - 1];
   
-  lastPage.drawImage(signatureImage, {
-    x: 50,
-    y: 50,
-    width: 150,
-    height: 75,
-  });
+  const drawOnPage = (page: any) => {
+    const { width } = page.getSize();
+    page.drawImage(signatureImage, {
+      x: width - 200,
+      y: 50,
+      width: 150,
+      height: 75,
+    });
+  };
+
+  if (options.type === 'all') {
+    pages.forEach(drawOnPage);
+  } else if (options.type === 'specific' && typeof options.pageIndex === 'number') {
+    if (options.pageIndex >= 0 && options.pageIndex < pages.length) {
+      drawOnPage(pages[options.pageIndex]);
+    }
+  } else {
+    // Default to last page
+    drawOnPage(pages[pages.length - 1]);
+  }
   
   return await pdfDoc.save();
 }
