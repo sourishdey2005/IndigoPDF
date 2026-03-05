@@ -88,7 +88,6 @@ const tools = [
 
   // Specialized
   { id: 'scan-to-pdf', title: "Scan to PDF", description: "Use your device camera to scan paper documents into PDF.", icon: Camera, href: "/scan-to-pdf", category: "Specialized" },
-  { id: 'compare', title: "Compare PDF", description: "Spot differences and changes between two PDF versions instantly.", icon: Search, href: "/compare-pdf", category: "Specialized" },
   { id: 'extract-images', title: "Extract Images", description: "Pull all high-resolution images from a PDF into separate files.", icon: LayoutGrid, href: "/extract-images", category: "Specialized" },
 ];
 
