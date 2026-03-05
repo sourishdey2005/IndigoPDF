@@ -37,7 +37,6 @@ const NAV_TOOLS = [
   ]},
   { group: "Advanced", items: [
     { name: "OCR PDF", href: "/ocr-pdf", icon: FileSearch },
-    { name: "Translate PDF", href: "/translate-pdf", icon: Languages },
     { name: "Scan to PDF", href: "/scan-to-pdf", icon: Camera },
   ]}
 ];

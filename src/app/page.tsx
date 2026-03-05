@@ -91,7 +91,6 @@ const tools = [
   { id: 'sign', title: "Sign PDF", description: "Draw or upload your signature to sign documents instantly.", icon: PenTool, href: "/sign-pdf", category: "Security" },
 
   // Specialized
-  { id: 'translate', title: "Translate PDF", description: "AI-powered translation that preserves your original PDF layout.", icon: Languages, href: "/translate-pdf", category: "Specialized" },
   { id: 'pdf-to-pdfa', title: "PDF to PDF/A", description: "Transform standard PDFs into PDF/A for long-term archiving.", icon: Layers, href: "/pdf-to-pdfa", category: "Specialized" },
   { id: 'scan-to-pdf', title: "Scan to PDF", description: "Use your device camera to scan paper documents into PDF.", icon: Camera, href: "/scan-to-pdf", category: "Specialized" },
   { id: 'compare', title: "Compare PDF", description: "Spot differences and changes between two PDF versions instantly.", icon: Search, href: "/compare-pdf", category: "Specialized" },
