@@ -1,3 +1,4 @@
+
 # IndigoPDF
 
 IndigoPDF is a professional-grade, privacy-first PDF utility suite built with Next.js 15. It allows users to perform over 25+ PDF operations completely client-side, ensuring that sensitive documents never leave the user's device.
@@ -7,7 +8,7 @@ IndigoPDF is a professional-grade, privacy-first PDF utility suite built with Ne
 - **Optimize**: High-speed Compression and structure Repair.
 - **Convert**: Bi-directional conversion for Word, Excel, PowerPoint, JPG, and HTML.
 - **Edit**: Intelligent OCR, Text Overlays, Watermarking, and Page Numbering.
-- **Security**: Password Protection, Unlocking, Digital Signatures, and Redaction.
+- **Security**: Unlocking and Digital Signatures.
 - **AI-Powered**: Layout-preserving Translation and high-accuracy OCR.
 - **Mobile Friendly**: Scan-to-PDF directly via your device camera.
 

@@ -13,7 +13,6 @@ import {
   FileSearch, 
   RotateCw, 
   Type, 
-  Lock, 
   Unlock, 
   Grid3X3,
   FileText,
@@ -23,7 +22,6 @@ import {
   Layers,
   Wrench,
   Search,
-  EyeOff,
   Crop,
   Languages,
   ArrowRight,
@@ -90,7 +88,6 @@ const tools = [
   
   // Security
   { id: 'unlock', title: "Unlock PDF", description: "Remove passwords and security restrictions from PDF files.", icon: Unlock, href: "/unlock-pdf", category: "Security" },
-  { id: 'redact', title: "Redact PDF", description: "Permanently black out sensitive information from your PDF.", icon: EyeOff, href: "/redact-pdf", category: "Security" },
   { id: 'sign', title: "Sign PDF", description: "Draw or upload your signature to sign documents instantly.", icon: PenTool, href: "/sign-pdf", category: "Security" },
 
   // Specialized

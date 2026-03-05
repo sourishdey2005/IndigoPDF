@@ -77,28 +77,6 @@ export async function compressPDF(file: File, level: number): Promise<Uint8Array
   });
 }
 
-/**
- * Protect PDF
- * Performs structure hardening and security protocol application.
- */
-export async function protectPDF(file: File, userPassword?: string): Promise<Uint8Array> {
-  const { PDFDocument } = await import('pdf-lib');
-  const arrayBuffer = await file.arrayBuffer();
-  
-  // Load and apply hardening.
-  const pdfDoc = await PDFDocument.load(arrayBuffer);
-  
-  // Flatten forms to prevent easy editing (Hardening)
-  const form = pdfDoc.getForm();
-  form.flatten();
-
-  // Re-save with security protocols
-  return await pdfDoc.save({
-    useObjectStreams: true,
-    addDefaultPage: false
-  });
-}
-
 export async function unlockPDF(file: File, password?: string): Promise<Uint8Array> {
   const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
@@ -479,24 +457,6 @@ export async function pdfToPDFA(file: File): Promise<Uint8Array> {
   const { PDFDocument } = await import('pdf-lib');
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
-  return await pdfDoc.save();
-}
-
-export async function redactPDF(file: File): Promise<Uint8Array> {
-  const { PDFDocument, rgb } = await import('pdf-lib');
-  const arrayBuffer = await file.arrayBuffer();
-  const pdfDoc = await PDFDocument.load(arrayBuffer);
-  const pages = pdfDoc.getPages();
-  pages.forEach(page => {
-    const { width, height } = page.getSize();
-    page.drawRectangle({
-      x: 50,
-      y: height - 100,
-      width: width - 100,
-      height: 20,
-      color: rgb(0, 0, 0),
-    });
-  });
   return await pdfDoc.save();
 }
 
