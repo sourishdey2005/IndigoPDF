@@ -1,7 +1,6 @@
-
 import Link from "next/link";
 import Image from "next/image";
-import { Github, Linkedin, Globe, ExternalLink, Smartphone, Mail, Heart } from "lucide-react";
+import { Github, Linkedin, ExternalLink, Smartphone, Mail, Heart } from "lucide-react";
 
 export function Footer() {
   return (
@@ -58,7 +57,7 @@ export function Footer() {
               <li><Link href="/compress-pdf" className="hover:text-primary transition-colors flex items-center gap-2">Compress PDF</Link></li>
               <li><Link href="/ocr-pdf" className="hover:text-primary transition-colors flex items-center gap-2">OCR PDF</Link></li>
               <li><Link href="/organize-pdf" className="hover:text-primary transition-colors flex items-center gap-2">Organize PDF</Link></li>
-              <li><Link href="/unlock-pdf" className="hover:text-primary transition-colors flex items-center gap-2">Unlock PDF</Link></li>
+              <li><Link href="/sign-pdf" className="hover:text-primary transition-colors flex items-center gap-2">Sign PDF</Link></li>
             </ul>
           </div>
 

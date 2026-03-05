@@ -1,4 +1,3 @@
-
 /**
  * PDF Service
  * Handles all client-side PDF operations using pdf-lib and pdfjs-dist.
@@ -75,13 +74,6 @@ export async function compressPDF(file: File, level: number): Promise<Uint8Array
     addDefaultPage: false,
     updateFieldAppearances: false
   });
-}
-
-export async function unlockPDF(file: File, password?: string): Promise<Uint8Array> {
-  const { PDFDocument } = await import('pdf-lib');
-  const arrayBuffer = await file.arrayBuffer();
-  const pdfDoc = await PDFDocument.load(arrayBuffer, { password });
-  return await pdfDoc.save();
 }
 
 export async function convertImagesToPDF(files: File[]): Promise<Uint8Array> {

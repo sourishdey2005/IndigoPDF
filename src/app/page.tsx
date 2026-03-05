@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, use } from "react";
@@ -13,7 +12,6 @@ import {
   FileSearch, 
   RotateCw, 
   Type, 
-  Unlock, 
   Grid3X3,
   FileText,
   LayoutGrid,
@@ -23,7 +21,6 @@ import {
   Wrench,
   Search,
   Crop,
-  Languages,
   ArrowRight,
   HelpCircle,
   XCircle,
@@ -87,11 +84,9 @@ const tools = [
   { id: 'metadata', title: "Metadata Editor", description: "Edit Title, Author, Subject, and Keywords of your PDF files.", icon: ShieldCheck, href: "/add-metadata", category: "Edit" },
   
   // Security
-  { id: 'unlock', title: "Unlock PDF", description: "Remove passwords and security restrictions from PDF files.", icon: Unlock, href: "/unlock-pdf", category: "Security" },
   { id: 'sign', title: "Sign PDF", description: "Draw or upload your signature to sign documents instantly.", icon: PenTool, href: "/sign-pdf", category: "Security" },
 
   // Specialized
-  { id: 'pdf-to-pdfa', title: "PDF to PDF/A", description: "Transform standard PDFs into PDF/A for long-term archiving.", icon: Layers, href: "/pdf-to-pdfa", category: "Specialized" },
   { id: 'scan-to-pdf', title: "Scan to PDF", description: "Use your device camera to scan paper documents into PDF.", icon: Camera, href: "/scan-to-pdf", category: "Specialized" },
   { id: 'compare', title: "Compare PDF", description: "Spot differences and changes between two PDF versions instantly.", icon: Search, href: "/compare-pdf", category: "Specialized" },
   { id: 'extract-images', title: "Extract Images", description: "Pull all high-resolution images from a PDF into separate files.", icon: LayoutGrid, href: "/extract-images", category: "Specialized" },
