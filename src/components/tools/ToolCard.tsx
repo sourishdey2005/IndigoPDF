@@ -25,16 +25,25 @@ export function ToolCard({ title, description, icon: Icon, href, category, class
       transition={{ duration: 0.2 }}
     >
       <Link href={href}>
-        <Card className={cn("h-full hover:shadow-xl transition-all border-none bg-white shadow-sm ring-1 ring-slate-200", className)}>
+        <Card className={cn(
+          "h-full hover:shadow-xl transition-all border-none bg-white dark:bg-slate-900/50 shadow-sm ring-1 ring-slate-200 dark:ring-slate-800 hover:ring-primary/50 dark:hover:ring-primary/50 backdrop-blur-sm",
+          className
+        )}>
           <CardContent className="p-6">
             <div className="flex flex-col gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
                 <Icon size={24} />
               </div>
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 block">{category}</span>
-                <h3 className="font-bold text-lg mb-1">{title}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-2">{description}</p>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1 block">
+                  {category}
+                </span>
+                <h3 className="font-bold text-lg mb-1 text-slate-900 dark:text-slate-100">
+                  {title}
+                </h3>
+                <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                  {description}
+                </p>
               </div>
             </div>
           </CardContent>

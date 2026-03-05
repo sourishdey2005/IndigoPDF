@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, use } from "react";
@@ -120,7 +121,7 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
   return (
     <div className="flex flex-col w-full overflow-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] lg:min-h-[90vh] flex items-center pt-20 pb-16 lg:pt-32 lg:pb-40 overflow-hidden bg-slate-50 dark:bg-slate-900/50">
+      <section className="relative min-h-[85vh] lg:min-h-[90vh] flex items-center pt-20 pb-16 lg:pt-32 lg:pb-40 overflow-hidden bg-slate-50 dark:bg-slate-950">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
           <motion.div 
             animate={{ 
@@ -150,7 +151,7 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="text-center lg:text-left"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold mb-6 sm:mb-8 border border-primary/20">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold mb-6 sm:mb-8 border border-primary/20 shadow-inner">
                 <Zap size={14} className="fill-primary" />
                 <span>100% Private Browser-Based PDF Tools</span>
               </div>
@@ -172,7 +173,7 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
                   </Button>
                 </a>
                 <a href="#how-it-works" className="w-full sm:w-auto">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto rounded-full h-14 sm:h-16 px-8 sm:px-10 text-base sm:text-lg font-bold border-2 hover:bg-slate-100 transition-all active:scale-95">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto rounded-full h-14 sm:h-16 px-8 sm:px-10 text-base sm:text-lg font-bold border-2 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all active:scale-95">
                     How it Works
                   </Button>
                 </a>
@@ -214,7 +215,7 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
                     src="https://res.cloudinary.com/dodhvvewu/image/upload/v1772620326/4a04717a-d297-45cc-a834-61ee0a1d0247_o4cliy.png"
                     alt="IndigoPDF Hero Logo"
                     fill
-                    className="object-contain drop-shadow-[0_20px_50px_rgba(79,70,229,0.3)]"
+                    className="object-contain drop-shadow-[0_20px_50px_rgba(79,70,229,0.3)] dark:drop-shadow-[0_20px_50px_rgba(79,70,229,0.15)]"
                     priority
                   />
                 </motion.div>
@@ -224,51 +225,23 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
         </div>
       </section>
 
-      {/* Core Benefits Section */}
-      <section className="py-16 sm:py-24 bg-white dark:bg-slate-950 border-y border-slate-100 dark:border-slate-900">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-12">
-            {[
-              { icon: ShieldCheck, title: "Privacy First", color: "emerald", desc: "Documents are processed entirely within your browser's local sandbox. No data ever leaves your device." },
-              { icon: Cpu, title: "Native Speed", color: "amber", desc: "Leveraging the full power of your machine's hardware for high-speed PDF manipulation without server latency." },
-              { icon: MousePointer2, title: "Zero Friction", color: "indigo", desc: "No signups, no watermarks, and no annoying download limits. Just upload, process, and download." }
-            ].map((benefit, i) => (
-              <motion.div key={i} whileHover={{ y: -5 }} className="space-y-4 text-center sm:text-left">
-                <div className={cn(
-                  "w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner mx-auto sm:mx-0",
-                  benefit.color === "emerald" ? "bg-emerald-100 text-emerald-600" :
-                  benefit.color === "amber" ? "bg-amber-100 text-amber-600" :
-                  "bg-indigo-100 text-indigo-600"
-                )}>
-                  <benefit.icon size={28} />
-                </div>
-                <h3 className="text-xl font-bold">{benefit.title}</h3>
-                <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
-                  {benefit.desc}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Tools Section */}
-      <section id="tools" className="py-16 sm:py-24 container mx-auto px-4 scroll-mt-20">
+      <section id="tools" className="py-16 sm:py-24 bg-white dark:bg-slate-950 container mx-auto px-4 scroll-mt-20">
         <div className="flex flex-col items-center justify-between mb-12 sm:mb-16 gap-8 text-center lg:flex-row lg:text-left">
           <div className="space-y-2">
-            <h2 className="text-3xl sm:text-4xl font-bold font-headline">Professional Toolset</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold font-headline text-slate-900 dark:text-slate-100">Professional Toolset</h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-xl">
               Everything you need to manage your PDF documents securely, organized by category for easy access.
             </p>
           </div>
           
           <Tabs defaultValue="All" onValueChange={setActiveTab} className="w-full lg:w-auto">
-            <TabsList className="bg-white dark:bg-slate-800 p-1 h-auto sm:h-14 rounded-2xl border shadow-xl flex flex-wrap sm:flex-nowrap justify-center overflow-hidden">
+            <TabsList className="bg-slate-50 dark:bg-slate-900/50 p-1 h-auto sm:h-14 rounded-2xl border dark:border-slate-800 shadow-xl flex flex-wrap sm:flex-nowrap justify-center overflow-hidden">
               {["All", "Organize", "Optimize", "Convert", "Edit", "Security", "Specialized"].map((tab) => (
                 <TabsTrigger 
                   key={tab} 
                   value={tab} 
-                  className="rounded-xl px-3 sm:px-6 py-2 sm:h-full text-xs sm:text-sm font-bold data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg transition-all"
+                  className="rounded-xl px-3 sm:px-6 py-2 sm:h-full text-xs sm:text-sm font-bold data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg transition-all dark:data-[state=inactive]:text-slate-400"
                 >
                   {tab}
                 </TabsTrigger>
@@ -288,13 +261,13 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-16 sm:py-24 bg-slate-50 dark:bg-slate-950 scroll-mt-20">
+      <section id="faq" className="py-16 sm:py-24 bg-slate-50 dark:bg-slate-900/50 scroll-mt-20 border-t dark:border-slate-800">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="text-center mb-12 sm:mb-16">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mx-auto mb-6">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mx-auto mb-6 shadow-inner">
               <HelpCircle size={32} />
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight text-slate-900 dark:text-slate-100">
               Frequently Asked Questions
             </h2>
             <p className="text-muted-foreground mt-2">Everything you need to know about IndigoPDF.</p>
@@ -302,8 +275,8 @@ export default function Home(props: { params: Promise<any>; searchParams: Promis
           
           <Accordion type="single" collapsible className="w-full space-y-4">
             {faqs.map((faq, idx) => (
-              <AccordionItem key={idx} value={`item-${idx}`} className="bg-white dark:bg-slate-900 px-6 sm:px-8 rounded-3xl border shadow-sm overflow-hidden border-none">
-                <AccordionTrigger className="text-base sm:text-lg font-bold hover:no-underline py-5 sm:py-6">
+              <AccordionItem key={idx} value={`item-${idx}`} className="bg-white dark:bg-slate-900 px-6 sm:px-8 rounded-3xl border shadow-sm overflow-hidden border-none transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                <AccordionTrigger className="text-base sm:text-lg font-bold hover:no-underline py-5 sm:py-6 text-slate-900 dark:text-slate-100">
                   {faq.question}
                 </AccordionTrigger>
                 <AccordionContent className="text-slate-600 dark:text-slate-400 text-sm sm:text-base pb-6 sm:pb-8">
