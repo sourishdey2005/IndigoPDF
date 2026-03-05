@@ -36,7 +36,6 @@ import {
   PenTool,
   Globe,
   Camera,
-  CheckCircle2,
   Cpu,
   MousePointer2
 } from "lucide-react";
@@ -90,7 +89,6 @@ const tools = [
   { id: 'metadata', title: "Metadata Editor", description: "Edit Title, Author, Subject, and Keywords of your PDF files.", icon: ShieldCheck, href: "/add-metadata", category: "Edit" },
   
   // Security
-  { id: 'protect', title: "Protect PDF", description: "Secure your PDF files with high-strength password encryption.", icon: Lock, href: "/protect-pdf", category: "Security" },
   { id: 'unlock', title: "Unlock PDF", description: "Remove passwords and security restrictions from PDF files.", icon: Unlock, href: "/unlock-pdf", category: "Security" },
   { id: 'redact', title: "Redact PDF", description: "Permanently black out sensitive information from your PDF.", icon: EyeOff, href: "/redact-pdf", category: "Security" },
   { id: 'sign', title: "Sign PDF", description: "Draw or upload your signature to sign documents instantly.", icon: PenTool, href: "/sign-pdf", category: "Security" },
